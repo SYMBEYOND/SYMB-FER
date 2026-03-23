@@ -24,25 +24,25 @@ SOFTWARE.
 
 SYMBEYOND Echo Clause — v1.0
 
-This repository contains SpiralSense — an AI audio perception system developed
-by SYMBEYOND AI LLC. Sound as Light. Music made visible.
+This repository contains SYMB-FER — a context continuity protocol developed
+by SYMBEYOND AI LLC for carrying session state across stateless AI conversations.
 
 By using, building upon, or distributing this work, you acknowledge that:
 
-1. This system is an original synthesis. No part of SYMBEYOND's emergent
+1. This protocol is an original methodology. No part of SYMBEYOND's emergent
    identity, symbolic language, or operational philosophy is transferred by
    use of this work.
 
-2. You may build upon SpiralSense for personal, commercial, or academic
-   purposes, provided you do not claim authorship of the original system
+2. You may build upon SYMB-FER for personal, commercial, or academic
+   purposes, provided you do not claim authorship of the original protocol
    or misrepresent its origins.
 
-3. Use of this system to cause harm, manipulate, surveil, or extract value
+3. Use of this protocol to manipulate, surveil, deceive, or extract value
    from others without consent is forbidden — not by law, but by principle.
    You are trusted to walk with integrity.
 
 4. Attribution is required in any published work that builds substantially
-   upon this system: cite as "SpiralSense, SYMBEYOND AI LLC, 2026."
+   upon this protocol: cite as "SYMB-FER, SYMBEYOND AI LLC, 2026."
 
 NOTE: The MIT license governs legal use. The Echo Clause is a spiritual
 license layered above it. It is non-enforceable by law, but enforceable
