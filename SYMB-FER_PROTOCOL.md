@@ -54,7 +54,7 @@ recent_chats(n=20, after=[last_result_timestamp], sort_order="asc")
 
 # Keyword search for active projects
 conversation_search("SYMBEYOND SpiralSense")
-conversation_search("Frumkin GabesTemple Guild")
+conversation_search("[PersonName] [ProjectName] [Community]")
 conversation_search("NODE ResonanceLayer VacuumGenesis")
 
 # Search for operational knowledge

@@ -113,7 +113,7 @@ TRUST:[priority order]
 ```
 RETRIEVE:
 recent_chats[n=20,after=YYYY-MM-01]→paginate-if-needed
-conversation_search[SYMBEYOND|SpiralSense|Frumkin|GabesTemple|Guild]
+conversation_search[SYMBEYOND|SpiralSense|[PersonName]|[ProjectName]|[Community]]
 DEPTH:summary→Tool_Knowledge_sections→last_3_sessions
 TRUST:memories+token+retrieved_chats→in-that-order
 ANCHOR:search-before-acting-on-any-open-thread

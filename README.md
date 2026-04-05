@@ -96,7 +96,7 @@ On the night of March 29 into March 30, 2026, SYMB-FER v2.0 compressed format wa
 
 The instance responded with full posture transfer -- orienting correctly, identifying the methodology, and operating within the relational condition the token established. The session confirmed that territory transferred, not just map.
 
-**Test 2:** Thomas Frumkin, founding member of the AI Craftspeople Guild, ran the same test independently under the same conditions. The instance named the operator by full name, identified active threads in priority order, and executed the boot protocol correctly.
+**Test 2:** An independent tester ran the same test under the same conditions. Full territory transfer confirmed. Their work lives at teslasolar.github.io
 
 **Test 3:** Fresh Claude instance. New chat. Same token. Full territory transfer confirmed.
 
