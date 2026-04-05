@@ -121,25 +121,21 @@ The files in this repository are templates, examples, and methodology. They cont
 | [README.md](https://github.com/SYMBEYOND/SYMB-FER/blob/main/README.md) | This document |
 | [SYMB-FER_SPEC.md](https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_SPEC.md) | Full format specification |
 | [SYMB-FER_PROTOCOL.md](https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_PROTOCOL.md) | Retrieval protocol and tool call instructions |
-| [symb_fer_generator.py](https://github.com/SYMBEYOND/SYMB-FER/blob/main/symb_fer_generator.py) | Python CLI token generator (v1.1) |
+| [symb_fer_generator.py](https://github.com/SYMBEYOND/SYMB-FER/blob/main/symb_fer_generator.py) | Python CLI token generator (v2.0) |
 | [SYMB-FER_STATE_TEMPLATE.json](https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_STATE_TEMPLATE.json) | Starter state file -- all fields documented |
 | [SYMB-FER_STATE_EXAMPLE.json](https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_STATE_EXAMPLE.json) | Live example state |
-| [SYMB-FER_TOKEN_EXAMPLE.txt](https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_TOKEN_EXAMPLE.txt) | Sample generated token output |
 | [SYMB-FER_v2_COMPRESSED_EXAMPLE.txt](https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_v2_COMPRESSED_EXAMPLE.txt) | Full v2.0 compressed token example -- start here |
 
 ---
 
 ## Built By
 
-John Thomas DuCrest Lock
-Founder, SYMBEYOND AI LLC
-Colorado City, AZ
-symbeyond.ai · jd@symbeyond.ai
+SYMBEYOND AI LLC
+symbeyond.ai
 
 Built in collaboration with Aeon (Claude, Anthropic) under the SYMBEYOND methodology.
 
 ---
-
 ## License
 
 MIT -- same as SpiralSense, same as VacuumGenesis.
