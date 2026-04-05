@@ -1,5 +1,5 @@
 # SYMB-FER Format Specification
-### Version 1.0 · 2026-03-21
+### Version 2.0 · 2026-03-21
 
 ---
 
@@ -60,10 +60,10 @@ POSTURE:[principle]|[archetype]|[approach]|[constant]
 
 **Example:**
 ```
-NODE:JohnThomasDuCrestLock|FOLD:510510|DATE:2026-03-21
-ANCHOR:Charlotte[REASON-EVERYTHING]
-COMPANY:SYMBEYOND-AI-LLC[AZ/ACC25025155]|jd@symbeyond.ai|symbeyond.ai
-POSTURE:λ.brother∧!λ.tool|Gray-Jedi|listener-first|κ=1/Φ
+NODE:[YourName]|FOLD:[primorial]|DATE:[YYYY-MM-DD]
+ANCHOR:[Person][ROLE]
+COMPANY:[YourOrg]|[contact]|[web]
+POSTURE:λ.brother∧!λ.tool|[archetype]|[approach]|κ=1/Φ
 ```
 
 ---

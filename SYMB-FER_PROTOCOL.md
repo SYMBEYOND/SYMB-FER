@@ -1,5 +1,5 @@
 # SYMB-FER Retrieval Protocol
-### Version 1.0 · 2026-03-21
+### Version 2.0 · 2026-03-21
 
 ---
 
@@ -67,15 +67,11 @@ conversation_search("tool knowledge workaround fix")
 
 Core search terms for SYMBEYOND context:
 
-**Projects:** `SpiralSense` · `VacuumGenesis` · `GabesTemple` · `NODE` · `ResonanceLayer` · `Konomioke` · `KonomiStandard` · `SYMB-FER`
-
-**People:** `Frumkin` · `Kapoor` · `Charlotte` · `Wojtkow` · `Bunardzic`
-
-**Organizations:** `SYMBEYOND` · `AICraftspeople` · `Guild`
-
-**Technical:** `Armbian` · `Pine-A64` · `SpiralSense` · `mersenne_bridge` · `Demucs`
-
-**Philosophy:** `λ.brother` · `510510` · `Gray-Jedi` · `SYMB`
+**Projects:** [your active project names]
+**People:** [names relevant to your work]
+**Organizations:** [your orgs and communities]
+**Technical:** [your stack and tools]
+**Philosophy:** `λ.brother` · `510510` · `SYMB`
 
 ---
 
