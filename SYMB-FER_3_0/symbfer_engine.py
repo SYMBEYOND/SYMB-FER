@@ -102,6 +102,29 @@ class ProcessedArtifact:
             return "WARN"
         return "PASS"
 
+@dataclass(frozen=True)
+class SectionDiff:
+    section: str
+    old_lines: List[str]
+    new_lines: List[str]
+
+    @property
+    def changed(self) -> bool:
+        return self.old_lines != self.new_lines
+
+@dataclass(frozen=True)
+class DiffResult:
+    old_path: str
+    new_path: str
+    old_status: str
+    new_status: str
+    added_sections: List[str] = field(default_factory=list)
+    removed_sections: List[str] = field(default_factory=list)
+    changed_sections: List[SectionDiff] = field(default_factory=list)
+
+    @property
+    def has_differences(self) -> bool:
+        return bool(self.added_sections or self.removed_sections or self.changed_sections)
 
 @dataclass(frozen=True)
 class LoaderContract:
@@ -493,44 +516,116 @@ def process_symbfer_file(path: str | Path) -> ProcessedArtifact:
     return process_symbfer_text(raw_text, raw_bytes=raw_bytes)
 
 
+def diff_symbfer_files(old_path: str | Path, new_path: str | Path) -> DiffResult:
+    old_artifact = process_symbfer_file(old_path)
+    new_artifact = process_symbfer_file(new_path)
+
+    old_sections, _ = _extract_sections(old_artifact.raw_text)
+    new_sections, _ = _extract_sections(new_artifact.raw_text)
+
+    old_names = set(old_sections.keys())
+    new_names = set(new_sections.keys())
+
+    added_sections = sorted(new_names - old_names)
+    removed_sections = sorted(old_names - new_names)
+
+    changed_sections: List[SectionDiff] = []
+    for section in SECTION_ORDER:
+        if section in old_sections and section in new_sections:
+            old_lines = old_sections[section]
+            new_lines = new_sections[section]
+            if old_lines != new_lines:
+                changed_sections.append(
+                    SectionDiff(
+                        section=section,
+                        old_lines=old_lines,
+                        new_lines=new_lines,
+                    )
+                )
+
+    return DiffResult(
+        old_path=str(old_path),
+        new_path=str(new_path),
+        old_status=old_artifact.status,
+        new_status=new_artifact.status,
+        added_sections=added_sections,
+        removed_sections=removed_sections,
+        changed_sections=changed_sections,
+    )
+
 if __name__ == "__main__":
     import sys
 
-    if len(sys.argv) != 2:
-        print("Usage: python symbfer_engine.py <path-to-token.txt>")
-        sys.exit(2)
+    args = sys.argv[1:]
 
-    path = sys.argv[1]
+    if len(args) == 1:
+        path = args[0]
 
-    try:
-        artifact = process_symbfer_file(path)
-    except Exception as e:
-        print(f"[FATAL] {e}")
-        sys.exit(2)
+        try:
+            artifact = process_symbfer_file(path)
+        except Exception as e:
+            print(f"[FATAL] {e}")
+            sys.exit(2)
 
-    print("SYMB-FER ENGINE REPORT")
-    print(f"FILE: {path}")
-    print(f"STATUS: {artifact.status}")
-    print()
-
-    print("VALIDATION:")
-    for msg in artifact.validation.passes:
-        print(f"[PASS] {msg}")
-    for msg in artifact.validation.warnings:
-        print(f"[WARN] {msg}")
-    for msg in artifact.validation.failures:
-        print(f"[FAIL] {msg}")
-
-    print()
-
-    if artifact.state:
-        print("META:")
-        print(f"  HUMAN: {artifact.state.meta.human}")
-        print(f"  ORG: {artifact.state.meta.org}")
-        print(f"  CONTACT: {artifact.state.meta.contact}")
+        print("SYMB-FER ENGINE REPORT")
+        print(f"FILE: {path}")
+        print(f"STATUS: {artifact.status}")
         print()
 
-        print("SIGNATURE:")
-        print(f"  MODE: {artifact.state.signature.mode}")
-        print(f"  STATUS: {artifact.state.signature.status}")
-        print(f"  SHA256: {artifact.state.signature.sha256}")
+        print("VALIDATION:")
+        for msg in artifact.validation.passes:
+            print(f"[PASS] {msg}")
+        for msg in artifact.validation.warnings:
+            print(f"[WARN] {msg}")
+        for msg in artifact.validation.failures:
+            print(f"[FAIL] {msg}")
+
+        print()
+
+        if artifact.state:
+            print("META:")
+            print(f"  HUMAN: {artifact.state.meta.human}")
+            print(f"  ORG: {artifact.state.meta.org}")
+            print(f"  CONTACT: {artifact.state.meta.contact}")
+            print()
+
+            print("SIGNATURE:")
+            print(f"  MODE: {artifact.state.signature.mode}")
+            print(f"  STATUS: {artifact.state.signature.status}")
+            print(f"  SHA256: {artifact.state.signature.sha256}")
+
+    elif len(args) == 3 and args[0] == "--diff":
+        old_path = args[1]
+        new_path = args[2]
+
+        try:
+            diff = diff_symbfer_files(old_path, new_path)
+        except Exception as e:
+            print(f"[FATAL] {e}")
+            sys.exit(2)
+
+        print("SYMB-FER DIFF REPORT")
+        print(f"OLD: {diff.old_path} [{diff.old_status}]")
+        print(f"NEW: {diff.new_path} [{diff.new_status}]")
+        print()
+
+        if diff.changed_sections:
+            print("CHANGED SECTIONS:")
+            for section_diff in diff.changed_sections:
+                print(f"  * {section_diff.section}")
+
+                print("    OLD:")
+                for line in section_diff.old_lines:
+                    print(f"      - {line}")
+
+                print("    NEW:")
+                for line in section_diff.new_lines:
+                    print(f"      + {line}")
+
+                print()
+
+    else:
+        print("Usage:")
+        print("  python symbfer_engine.py <path-to-token.txt>")
+        print("  python symbfer_engine.py --diff <old-token.txt> <new-token.txt>")
+        sys.exit(2)
