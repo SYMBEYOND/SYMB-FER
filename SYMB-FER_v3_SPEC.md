@@ -24,13 +24,14 @@ A valid SYMB-FER v3.0 token must follow this exact order:
 4. §PARSE·GUIDE
 5. §TIME·COLLAB
 6. §BOOT·FACTS
-7. §BOOT·ETHOS
-8. §INTEGRITY
-9. §FINALIZATION
-10. §LESSONS·LEARNED
-11. §DRIFT·CHECK
-12. §TEST·TRACE
-13. §SIG
+7. §SESSION·STATE
+8. §BOOT·ETHOS
+9. §INTEGRITY
+10. §FINALIZATION
+11. §LESSONS·LEARNED
+12. §DRIFT·CHECK
+13. §TEST·TRACE
+14. §SIG
 
 ---
 
@@ -49,6 +50,23 @@ Rules:
 Placement:
 - must appear after §TRANSFER·MODE
 - must appear before §META
+
+---
+
+## §SESSION·STATE
+
+Purpose: carry live working continuity between sessions beyond identity and rules alone.
+
+Fields:
+- working·directory
+- active·paths
+- recent·actions
+- next·step
+- notes
+
+Placement:
+- must appear after §BOOT·FACTS
+- must appear before §BOOT·ETHOS
 
 ---
 
