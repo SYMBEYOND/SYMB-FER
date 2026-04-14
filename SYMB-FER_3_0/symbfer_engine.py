@@ -156,10 +156,12 @@ def expected_runtime_goal() -> str:
 
 CANONICAL_SECTIONS = [
     "TRANSFER·MODE",
+    "ARCHIVE·PRINCIPLE",
     "META",
     "PARSE·GUIDE",
     "TIME·COLLAB",
     "BOOT·FACTS",
+    "SESSION·STATE",
     "BOOT·ETHOS",
     "INTEGRITY",
     "FINALIZATION",
@@ -188,10 +190,12 @@ REQUIRED_RULE_LINES = [
 
 SECTION_ORDER = [
     "TRANSFER·MODE",
+    "ARCHIVE·PRINCIPLE",
     "META",
     "PARSE·GUIDE",
     "TIME·COLLAB",
     "BOOT·FACTS",
+    "SESSION·STATE",
     "BOOT·ETHOS",
     "INTEGRITY",
     "FINALIZATION",
@@ -200,7 +204,6 @@ SECTION_ORDER = [
     "TEST·TRACE",
     "SIG",
 ]
-
 
 def _parse_key_value_lines(lines: List[str]) -> Dict[str, str]:
     data: Dict[str, str] = {}

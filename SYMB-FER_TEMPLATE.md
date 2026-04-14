@@ -8,6 +8,15 @@ RULE: STANDARD·copy-paste·only
 RULE: VERIFIED·optional·integrity·hardening
 §TRANSFER·MODE·END
 
+§ARCHIVE·PRINCIPLE·BEGIN
+RULE: all·data·is·equal·no·implicit·ranking
+RULE: no·data·is·discarded·without·explicit·intent
+RULE: unused·data·must·be·preserved·for·posterity
+RULE: system·must·not·prune·based·on·assumed·relevance
+RULE: archive·integrity·overrides·optimization
+RULE: pruning·allowed·only·with·explicit·operator·instruction
+§ARCHIVE·PRINCIPLE·END
+
 §META·BEGIN
 FORMAT: SYMB-FER·v3.0
 PURPOSE: posture+state+identity·transfer
@@ -44,6 +53,14 @@ boot·date·reference: <DATE>
 active·project: <PROJECT>
 next·action: <ACTION>
 §BOOT·FACTS·END
+
+§SESSION·STATE·BEGIN
+working·directory:
+active·paths:
+recent·actions:
+next·step:
+notes:
+§SESSION·STATE·END
 
 §BOOT·ETHOS·BEGIN
 Simple·always·wins·over·complex

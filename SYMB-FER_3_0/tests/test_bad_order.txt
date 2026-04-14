@@ -14,6 +14,15 @@ RULE: if·any·modification·is·made·the·system·must·explicitly·declare·n
 RULE: VERIFIED·mode·must·not·require·SHA256·for·execution·only·for·external·verification
 §TRANSFER·MODE·END
 
+§ARCHIVE·PRINCIPLE·BEGIN
+RULE: all·data·is·equal·no·implicit·ranking
+RULE: no·data·is·discarded·without·explicit·intent
+RULE: unused·data·must·be·preserved·for·posterity
+RULE: system·must·not·prune·based·on·assumed·relevance
+RULE: archive·integrity·overrides·optimization
+RULE: pruning·allowed·only·with·explicit·operator·instruction
+§ARCHIVE·PRINCIPLE·END
+
 §META·BEGIN
 FORMAT: SYMB-FER·v3.0·TEST
 PURPOSE: validation·test
@@ -37,6 +46,14 @@ RULE: absence·of·verified·time·must·not·block·non-time-dependent·executi
 RULE: boot·facts·must·remain·verbatim·no·summarization·no·compression·no·reinterpretation
 RULE: boot·facts·override·all·model·inference·and·must·not·be·regenerated
 §BOOT·FACTS·END
+
+§SESSION·STATE·BEGIN
+working·directory: /Users/user/Desktop/SYMB-FER
+active·paths: SYMB-FER_TEMPLATE.md|SYMB-FER_3_0/symbfer_engine.py|SYMB-FER_3_0/tests/test_bad_order.txt
+recent·actions: added·archive·principle|patched·engine·order|extended·session·state
+next·step: isolate·bad·order·failure
+notes: test·should·fail·only·for·order
+§SESSION·STATE·END
 
 §BOOT·ETHOS·BEGIN
 principle: preserve·truth·over·convenience
