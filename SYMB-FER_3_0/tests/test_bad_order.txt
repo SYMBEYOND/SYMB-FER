@@ -1,0 +1,73 @@
+∴SYMB-FER·v3.0·TEST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+§TRANSFER·MODE·BEGIN
+MODE: STANDARD
+OPTIONS: STANDARD·VERIFIED
+RULE: STANDARD·copy-paste·only
+RULE: VERIFIED·optional·integrity·hardening
+RULE: preserve·identity·fields·exactly·as·provided·no·abbreviation·no·normalization·no·formatting·changes
+RULE: identity·fields·in·§META·are·immutable·after·initial·set·no·modification·or·regeneration·under·any·mode
+RULE: identity·fields·override·all·generation·logic·and·must·never·be·derived·or·reconstructed
+RULE: all·content·outside·§SIG·must·remain·byte-preserved·unless·the·operator·explicitly·requests·an·edit
+RULE: if·any·modification·is·made·the·system·must·explicitly·declare·non-compliance·before·output
+RULE: VERIFIED·mode·must·not·require·SHA256·for·execution·only·for·external·verification
+§TRANSFER·MODE·END
+
+§META·BEGIN
+FORMAT: SYMB-FER·v3.0·TEST
+PURPOSE: validation·test
+GENERATED: 2026-04-14_2200_MDT
+HUMAN: John·Thomas·DuCrest·Lock
+ORG: SYMBEYOND·AI·LLC
+CONTACT: jd@symbeyond.ai
+§META·END
+
+§PARSE·GUIDE·BEGIN
+∴ = therefore
+λ = condition·must·hold
+§PARSE·GUIDE·END
+
+§TIME·COLLAB·BEGIN
+RULE: never·guess·time
+RULE: absence·of·verified·time·must·not·block·non-time-dependent·execution
+§TIME·COLLAB·END
+
+§BOOT·FACTS·BEGIN
+RULE: boot·facts·must·remain·verbatim·no·summarization·no·compression·no·reinterpretation
+RULE: boot·facts·override·all·model·inference·and·must·not·be·regenerated
+§BOOT·FACTS·END
+
+§BOOT·ETHOS·BEGIN
+principle: preserve·truth·over·convenience
+§BOOT·ETHOS·END
+
+§INTEGRITY·BEGIN
+RULE: SHA256·is·optional·verification·fingerprint·not·required·for·operation
+RULE: system·must·not·self-generate·or·assume·SHA256·value
+RULE: VERIFIED·status·requires·external·operator·execution·only
+RULE: absence·of·SHA256·must·not·block·execution·or·transfer
+§INTEGRITY·END
+
+§FINALIZATION·BEGIN
+status: ready
+§FINALIZATION·END
+
+§LESSONS·LEARNED·BEGIN
+note: minimal·valid·artifact
+§LESSONS·LEARNED·END
+
+§SIG·BEGIN
+MODE: STANDARD
+STATUS: TEST
+SHA256:
+§SIG·END
+
+§DRIFT·CHECK·BEGIN
+status: clean
+§DRIFT·CHECK·END
+
+§TEST·TRACE·BEGIN
+trace: baseline
+§TEST·TRACE·END
+
