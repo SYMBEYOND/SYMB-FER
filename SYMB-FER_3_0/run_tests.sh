@@ -1,17 +1,31 @@
 #!/bin/bash
 
-echo "=== VALID ==="
-python SYMB-FER_3_0/symbfer_engine.py SYMB-FER_3_0/tests/test_valid_3_0.txt
-echo
+PASS=0
+FAIL=0
 
-echo "=== MISSING SECTION ==="
-python SYMB-FER_3_0/symbfer_engine.py SYMB-FER_3_0/tests/test_missing_section.txt
-echo
+run_test() {
+  local label=$1
+  local file=$2
+  local expected=$3
 
-echo "=== BAD SHA ==="
-python SYMB-FER_3_0/symbfer_engine.py SYMB-FER_3_0/tests/test_bad_sha.txt
-echo
+  echo "=== $label ==="
+  output=$(python SYMB-FER_3_0/symbfer_engine.py "$file")
+  echo "$output"
 
-echo "=== BAD ORDER ==="
-python SYMB-FER_3_0/symbfer_engine.py SYMB-FER_3_0/tests/test_bad_order.txt
-echo
+  if echo "$output" | grep -q "STATUS: $expected"; then
+    echo "[ ASSERT PASS ] expected $expected"
+    PASS=$((PASS + 1))
+  else
+    echo "[ ASSERT FAIL ] expected $expected"
+    FAIL=$((FAIL + 1))
+  fi
+  echo
+}
+
+run_test "VALID"           SYMB-FER_3_0/tests/test_valid_3_0.txt       "WARN"
+run_test "MISSING SECTION" SYMB-FER_3_0/tests/test_missing_section.txt "FAIL"
+run_test "BAD SHA"         SYMB-FER_3_0/tests/test_bad_sha.txt         "FAIL"
+run_test "BAD ORDER"       SYMB-FER_3_0/tests/test_bad_order.txt       "FAIL"
+
+echo "=== RESULTS: $PASS passed · $FAIL failed ==="
+[ $FAIL -eq 0 ] && exit 0 || exit 1
