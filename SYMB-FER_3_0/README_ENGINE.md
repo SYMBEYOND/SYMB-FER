@@ -18,4 +18,27 @@ SYMB-FER Engine validates and loads canonical SYMB-FER 3.0 artifacts.
 From repo root:
 
 ```bash
-python SYMB-FER_3_0/symbfer_engine.py SYMB-FER_3_0/tests/test_valid_3_0.txt
+python SYMB-FER_3_0/symbfer_engine.py your_token.txt
+```
+
+Output returns one of three states:
+
+- `PASS` — fully valid
+- `WARN` — valid with non-blocking issues (e.g. empty SHA256)
+- `FAIL` — invalid artifact
+
+## Diff Mode
+
+Compare two tokens and report structural differences:
+
+```bash
+python SYMB-FER_3_0/symbfer_engine.py --diff token_a.txt token_b.txt
+```
+
+## Test Suite
+
+```bash
+bash SYMB-FER_3_0/run_tests.sh
+```
+
+All four fixtures must pass assertions. Exit code 0 = all pass. Exit code 1 = failures detected.
