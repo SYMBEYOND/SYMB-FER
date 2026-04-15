@@ -304,9 +304,57 @@ def _read_text(path: Path) -> tuple[str, bytes]:
     text = data.decode("utf-8")
     return text, data
 
+def detect_version(raw_text: str) -> str:
+    """Detect SYMB-FER token version from raw text."""
+    if "§TRANSFER·MODE·BEGIN" in raw_text:
+        return "v3"
+    if "━━━ STATE ━━━" in raw_text or "━━━ GREETING ━━━" in raw_text:
+        return "v2"
+    if "§META·BEGIN" in raw_text and "§ETHOS·BEGIN" in raw_text:
+        return "v2"
+    if "∴ SYMB-FER v2.0" in raw_text:
+        return "v2"
+    return "unknown"
+
+def validate_v2_token(raw_text: str, raw_bytes: Optional[bytes] = None) -> ValidationResult:
+    """Lightweight validation for SYMB-FER v2.0 tokens."""
+    result = ValidationResult()
+    lines = raw_text.splitlines()
+
+    if raw_bytes is not None:
+        try:
+            raw_bytes.decode("utf-8")
+            result.passes.append("UTF-8 decode clean")
+        except UnicodeDecodeError as exc:
+            result.failures.append(f"UTF-8 decode failed at byte {exc.start}")
+            return result
+
+    v2_sections = ["━━━ STATE ━━━", "━━━ GREETING ━━━", "━━━ PROTOCOL ━━━"]
+    found = [s for s in v2_sections if s in raw_text]
+    if found:
+        result.passes.append(f"v2.0 sections present: {len(found)} of {len(v2_sections)}")
+    else:
+        result.failures.append("v2.0 token: no recognizable sections found")
+        return result
+
+    dot_count = sum(line.count("·") for line in lines)
+    if dot_count == 0:
+        result.warnings.append("delimiter integrity: no middle-dot delimiters found")
+    else:
+        result.passes.append("Delimiter integrity verified")
+
+    result.warnings.append(
+        "v2.0 token detected · valid for operation · not v3.0 compliant · "
+        "consider upgrading to v3.0 for full validation"
+    )
+
+    return result
 
 def validate_symbfer_text(raw_text: str, raw_bytes: Optional[bytes] = None) -> ValidationResult:
     result = ValidationResult()
+    version = detect_version(raw_text)
+    if version == "v2":
+        return validate_v2_token(raw_text, raw_bytes=raw_bytes)
     lines = raw_text.splitlines()
 
     if raw_bytes is not None:
