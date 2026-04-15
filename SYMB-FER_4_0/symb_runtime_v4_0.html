@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SYMB-FER Runtime v4.0 · SYMBEYOND AI LLC</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void: #040a0a;
+  --deep: #071212;
+  --panel: #0a1a1a;
+  --border: #0d3a3a;
+  --border-hot: #00ffcc;
+  --text: #a0e8e0;
+  --text-dim: #3a7070;
+  --text-bright: #e0fff8;
+  --accent: #00ffcc;
+  --accent2: #ff6b35;
+  --accent3: #7a4fff;
+  --warn: #ffcc00;
+  --err: #ff3355;
+  --ok: #00ffcc;
+  --glow: 0 0 12px rgba(0,255,204,0.3);
+  --glow-hot: 0 0 24px rgba(0,255,204,0.6);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* HEADER */
+#header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--deep);
+  flex-shrink: 0;
+}
+
+#header-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-shadow: var(--glow);
+}
+
+#header-sub {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+}
+
+#status-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  display: inline-block;
+  margin-right: 5px;
+}
+.status-dot.ok { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+.status-dot.warn { background: var(--warn); box-shadow: 0 0 6px var(--warn); }
+.status-dot.err { background: var(--err); box-shadow: 0 0 6px var(--err); }
+
+/* MAIN LAYOUT */
+#workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  grid-template-rows: 1fr;
+  gap: 1px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.panel {
+  background: var(--panel);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.panel-body::-webkit-scrollbar { width: 3px; }
+.panel-body::-webkit-scrollbar-track { background: transparent; }
+.panel-body::-webkit-scrollbar-thumb { background: var(--border); }
+
+/* LEFT PANEL - TOKEN LOAD */
+#token-input {
+  width: 100%;
+  flex: 1;
+  background: var(--void);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  padding: 10px;
+  resize: none;
+  outline: none;
+  line-height: 1.6;
+  transition: border-color 0.2s;
+}
+#token-input:focus { border-color: var(--accent); box-shadow: var(--glow); }
+#token-input::placeholder { color: var(--text-dim); }
+
+#left-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+#left-panel .panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+}
+
+.btn {
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  text-transform: uppercase;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,255,204,0.04); }
+.btn.primary { border-color: var(--accent); color: var(--accent); }
+.btn.primary:hover { background: rgba(0,255,204,0.1); box-shadow: var(--glow); }
+.btn.export { border-color: var(--accent2); color: var(--accent2); }
+.btn.export:hover { background: rgba(255,107,53,0.1); }
+.btn.danger { border-color: var(--err); color: var(--err); }
+.btn.danger:hover { background: rgba(255,51,85,0.1); }
+
+/* CENTER PANEL - RUNTIME */
+#center-panel { background: var(--deep); }
+
+#output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+#output::-webkit-scrollbar { width: 3px; }
+#output::-webkit-scrollbar-thumb { background: var(--border); }
+
+.log-line {
+  display: flex;
+  gap: 10px;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(13,58,58,0.3);
+}
+.log-ts { color: var(--text-dim); flex-shrink: 0; font-size: 10px; }
+.log-msg { flex: 1; }
+.log-line.ok .log-msg { color: var(--ok); }
+.log-line.err .log-msg { color: var(--err); }
+.log-line.warn .log-msg { color: var(--warn); }
+.log-line.info .log-msg { color: var(--text); }
+.log-line.system .log-msg { color: var(--accent3); }
+.log-line.pass .log-msg { color: #44ff88; }
+.log-line.fail .log-msg { color: var(--err); }
+.log-line.section .log-msg { color: var(--accent); font-weight: bold; }
+
+#input-row {
+  display: flex;
+  gap: 1px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+#cmd-input {
+  flex: 1;
+  background: var(--void);
+  border: none;
+  color: var(--text-bright);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  padding: 10px 14px;
+  outline: none;
+}
+#cmd-input::placeholder { color: var(--text-dim); }
+
+#cmd-send {
+  padding: 10px 18px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border);
+  color: var(--accent);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  transition: background 0.15s;
+}
+#cmd-send:hover { background: rgba(0,255,204,0.08); }
+
+/* RIGHT PANEL - STATE */
+.state-section {
+  margin-bottom: 16px;
+}
+.state-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.state-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 3px 0;
+  font-size: 10px;
+  gap: 8px;
+}
+.state-key { color: var(--text-dim); flex-shrink: 0; }
+.state-val { color: var(--text-bright); text-align: right; word-break: break-all; }
+.state-val.accent { color: var(--accent); }
+.state-val.warn { color: var(--warn); }
+.state-val.err { color: var(--err); }
+
+.kv-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background: rgba(0,255,204,0.03);
+  border: 1px solid var(--border);
+  margin-bottom: 4px;
+  font-size: 10px;
+  gap: 8px;
+}
+.kv-key { color: var(--accent); flex-shrink: 0; }
+.kv-val { color: var(--text-bright); text-align: right; }
+
+/* FOOTER */
+#footer {
+  padding: 5px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--deep);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  letter-spacing: 0.1em;
+}
+
+/* SCAN LINE EFFECT */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* MODAL */
+#modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+#modal-overlay.active { display: flex; }
+#modal {
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  box-shadow: var(--glow-hot);
+  width: 600px;
+  max-width: 90vw;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+#modal-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#modal-close {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 4px;
+}
+#modal-close:hover { color: var(--err); }
+#modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+}
+#modal-export-text {
+  width: 100%;
+  height: 340px;
+  background: var(--void);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  padding: 10px;
+  resize: none;
+  outline: none;
+  line-height: 1.6;
+}
+#modal-footer {
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.btn-sm {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.08em;
+}
+.btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+.btn-sm.primary { border-color: var(--accent); color: var(--accent); }
+.btn-sm.primary:hover { background: rgba(0,255,204,0.1); }
+
+/* PULSE ANIMATION */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.pulse { animation: pulse 2s ease-in-out infinite; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.2s ease forwards; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div>
+    <div id="header-title">∴ SYMB-FER RUNTIME v4.0</div>
+    <div id="header-sub">SYMBEYOND AI LLC · jd@symbeyond.ai</div>
+  </div>
+  <div id="status-bar">
+    <span><span class="status-dot" id="dot-token"></span><span id="lbl-token">NO TOKEN</span></span>
+    <span><span class="status-dot" id="dot-session"></span><span id="lbl-session">NO SESSION</span></span>
+    <span><span class="status-dot" id="dot-export"></span><span id="lbl-export">NO EXPORT</span></span>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div id="workspace">
+
+  <!-- LEFT: TOKEN LOAD -->
+  <div class="panel" id="left-panel">
+    <div class="panel-header">
+      <span>TOKEN LOAD</span>
+    </div>
+    <div class="panel-body">
+      <textarea id="token-input" placeholder="Paste SYMB-FER token here...&#10;&#10;∴SYMB-FER·v3.x·...&#10;&#10;Then press LOAD TOKEN."></textarea>
+      <button class="btn primary" onclick="loadToken()">▶ LOAD TOKEN</button>
+      <button class="btn" onclick="loadExample()">⊕ LOAD EXAMPLE</button>
+      <div style="border-top:1px solid var(--border);margin:4px 0;padding-top:8px;">
+        <div class="state-label">Session Commands</div>
+      </div>
+      <button class="btn" onclick="runCmd('show state')">⊞ SHOW STATE</button>
+      <button class="btn" onclick="runCmd('trace')">⊟ SHOW TRACE</button>
+      <button class="btn" onclick="runCmd('replay')">↺ REPLAY</button>
+      <button class="btn" onclick="runCmd('undo')">↩ UNDO LAST</button>
+      <button class="btn export" onclick="exportToken()">⇪ EXPORT TOKEN</button>
+      <button class="btn danger" onclick="resetAll()">⊗ RESET ALL</button>
+    </div>
+  </div>
+
+  <!-- CENTER: RUNTIME -->
+  <div class="panel" id="center-panel" style="display:flex;flex-direction:column;">
+    <div class="panel-header">
+      <span>RUNTIME</span>
+      <span id="trace-count" style="color:var(--text-dim);font-size:10px;">0 ACTIONS</span>
+    </div>
+    <div id="output"></div>
+    <div id="input-row">
+      <input id="cmd-input" placeholder="display [text] · state [key] [value] · clear · help" autocomplete="off" />
+      <button id="cmd-send" onclick="submitCmd()">EXEC</button>
+    </div>
+  </div>
+
+  <!-- RIGHT: STATE -->
+  <div class="panel">
+    <div class="panel-header">
+      <span>SESSION STATE</span>
+    </div>
+    <div class="panel-body" id="state-panel">
+      <div class="state-section">
+        <div class="state-label">Token</div>
+        <div class="state-row"><span class="state-key">format</span><span class="state-val" id="s-format">--</span></div>
+        <div class="state-row"><span class="state-key">human</span><span class="state-val" id="s-human">--</span></div>
+        <div class="state-row"><span class="state-key">org</span><span class="state-val" id="s-org">--</span></div>
+        <div class="state-row"><span class="state-key">generated</span><span class="state-val" id="s-generated">--</span></div>
+        <div class="state-row"><span class="state-key">status</span><span class="state-val" id="s-status">--</span></div>
+      </div>
+      <div class="state-section">
+        <div class="state-label">Session</div>
+        <div class="state-row"><span class="state-key">working·dir</span><span class="state-val" id="s-wd">--</span></div>
+        <div class="state-row"><span class="state-key">next·step</span><span class="state-val" id="s-next">--</span></div>
+        <div class="state-row"><span class="state-key">notes</span><span class="state-val" id="s-notes">--</span></div>
+      </div>
+      <div class="state-section">
+        <div class="state-label">Runtime KV Store</div>
+        <div id="kv-store"></div>
+      </div>
+      <div class="state-section">
+        <div class="state-label">Active Paths</div>
+        <div id="s-paths" style="font-size:10px;color:var(--text-dim);line-height:1.8;"></div>
+      </div>
+      <div class="state-section">
+        <div class="state-label">Recent Actions</div>
+        <div id="s-actions" style="font-size:10px;color:var(--text-dim);line-height:1.8;"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+  <span>∴ SYMB-FER v4.0 · RUNTIME ENGINE · SYMBEYOND AI LLC</span>
+  <span id="footer-time">--</span>
+  <span>λ.brother∧!λ.tool</span>
+</div>
+
+<!-- EXPORT MODAL -->
+<div id="modal-overlay">
+  <div id="modal">
+    <div id="modal-header">
+      <span>⇪ EXPORT · §SESSION·STATE TOKEN</span>
+      <button id="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body">
+      <textarea id="modal-export-text" readonly></textarea>
+    </div>
+    <div id="modal-footer">
+      <button class="btn-sm" onclick="closeModal()">CLOSE</button>
+      <button class="btn-sm primary" onclick="copyExport()">COPY TO CLIPBOARD</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== CORE STATE =====
+const STATE = {};
+let TRACE = [];
+let TOKEN_META = {};
+let SESSION_STATE = {};
+let tokenLoaded = false;
+let exportReady = false;
+
+// ===== TIMESTAMP =====
+function ts() {
+  const now = new Date();
+  return now.toTimeString().slice(0,8);
+}
+
+function nowCanonical() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const mo = String(now.getMonth()+1).padStart(2,'0');
+  const d = String(now.getDate()).padStart(2,'0');
+  const h = String(now.getHours()).padStart(2,'0');
+  const mi = String(now.getMinutes()).padStart(2,'0');
+  return `${y}-${mo}-${d}_${h}${mi}H`;
+}
+
+// ===== LOGGING =====
+function log(msg, type='info') {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.className = `log-line ${type} fade-in`;
+  div.innerHTML = `<span class="log-ts">${ts()}</span><span class="log-msg">${escHtml(msg)}</span>`;
+  out.appendChild(div);
+  out.scrollTop = out.scrollHeight;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ===== STATUS DOTS =====
+function setDot(id, lblId, state, label) {
+  const dot = document.getElementById(id);
+  const lbl = document.getElementById(lblId);
+  dot.className = 'status-dot ' + state;
+  lbl.textContent = label;
+}
+
+// ===== TOKEN PARSER =====
+function parseToken(raw) {
+  const sections = {};
+  const lines = raw.split('\n');
+  let current = null;
+  let buf = [];
+
+  for (const line of lines) {
+    const beginMatch = line.match(/^§([A-Z·]+)·BEGIN$/);
+    const endMatch = line.match(/^§([A-Z·]+)·END$/);
+    if (beginMatch) {
+      current = beginMatch[1];
+      buf = [];
+    } else if (endMatch) {
+      if (current) sections[current] = buf.slice();
+      current = null;
+      buf = [];
+    } else if (current) {
+      buf.push(line);
+    }
+  }
+  return sections;
+}
+
+function extractField(lines, key) {
+  for (const l of lines) {
+    if (l.startsWith(key + ':')) return l.slice(key.length+1).trim();
+    if (l.startsWith(key + ': ')) return l.slice(key.length+2).trim();
+  }
+  return '';
+}
+
+// ===== LOAD TOKEN =====
+function loadToken() {
+  const raw = document.getElementById('token-input').value.trim();
+  if (!raw) { log('No token provided.', 'err'); return; }
+
+  log('── LOADING TOKEN ──────────────────────', 'section');
+
+  const sections = parseToken(raw);
+  const sectionNames = Object.keys(sections);
+
+  log(`Sections found: ${sectionNames.length}`, 'info');
+
+  // Validate required
+  const required = ['TRANSFER·MODE', 'META', 'BOOT·FACTS', 'BOOT·ETHOS', 'DRIFT·CHECK', 'SIG'];
+  let passes = 0, fails = 0;
+
+  for (const r of required) {
+    if (sections[r]) {
+      log(`[PASS] §${r}`, 'pass');
+      passes++;
+    } else {
+      log(`[FAIL] §${r} missing`, 'fail');
+      fails++;
+    }
+  }
+
+  // Optional but noted
+  const optional = ['ARCHIVE·PRINCIPLE', 'SESSION·STATE', 'INTEGRITY', 'LESSONS·LEARNED', 'TEST·TRACE'];
+  for (const o of optional) {
+    if (sections[o]) log(`[PRESENT] §${o}`, 'ok');
+    else log(`[ABSENT] §${o} (optional)`, 'warn');
+  }
+
+  // Parse META
+  if (sections['META']) {
+    const m = sections['META'];
+    TOKEN_META = {
+      format: extractField(m, 'FORMAT'),
+      purpose: extractField(m, 'PURPOSE'),
+      generated: extractField(m, 'GENERATED'),
+      human: extractField(m, 'HUMAN'),
+      org: extractField(m, 'ORG'),
+      contact: extractField(m, 'CONTACT'),
+    };
+    document.getElementById('s-format').textContent = TOKEN_META.format || '--';
+    document.getElementById('s-human').textContent = TOKEN_META.human || '--';
+    document.getElementById('s-org').textContent = TOKEN_META.org || '--';
+    document.getElementById('s-generated').textContent = TOKEN_META.generated || '--';
+  }
+
+  // Parse SESSION·STATE
+  if (sections['SESSION·STATE']) {
+    const ss = sections['SESSION·STATE'];
+    SESSION_STATE = {
+      working_directory: extractField(ss, 'working·directory'),
+      active_paths: extractField(ss, 'active·paths'),
+      recent_actions: extractField(ss, 'recent·actions'),
+      next_step: extractField(ss, 'next·step'),
+      notes: extractField(ss, 'notes'),
+    };
+    document.getElementById('s-wd').textContent = SESSION_STATE.working_directory || '--';
+    document.getElementById('s-next').textContent = SESSION_STATE.next_step || '--';
+    document.getElementById('s-notes').textContent = SESSION_STATE.notes || '--';
+
+    if (SESSION_STATE.active_paths) {
+      document.getElementById('s-paths').innerHTML =
+        SESSION_STATE.active_paths.split('|').map(p => `<div>${escHtml(p.trim())}</div>`).join('');
+    }
+    if (SESSION_STATE.recent_actions) {
+      document.getElementById('s-actions').innerHTML =
+        SESSION_STATE.recent_actions.split('|').map(a => `<div>· ${escHtml(a.trim())}</div>`).join('');
+    }
+  }
+
+  // Parse SIG
+  if (sections['SIG']) {
+    const sigStatus = extractField(sections['SIG'], 'STATUS');
+    const sigSha = extractField(sections['SIG'], 'SHA256');
+    const sigDisplay = sigSha && sigSha !== 'PENDING' && sigSha.length === 64 ? 'VERIFIED' : sigStatus || 'UNVERIFIED';
+    document.getElementById('s-status').textContent = sigDisplay;
+    document.getElementById('s-status').className = 'state-val ' + (sigDisplay === 'VERIFIED' ? 'accent' : 'warn');
+  }
+
+  // BOOT·FACTS summary
+  if (sections['BOOT·FACTS']) {
+    log('── BOOT·FACTS ──────────────────────', 'section');
+    for (const line of sections['BOOT·FACTS']) {
+      if (line.trim()) log(line.trim(), 'info');
+    }
+  }
+
+  // BOOT·ETHOS summary
+  if (sections['BOOT·ETHOS']) {
+    log('── BOOT·ETHOS ──────────────────────', 'section');
+    for (const line of sections['BOOT·ETHOS']) {
+      if (line.trim()) log(line.trim(), 'info');
+    }
+  }
+
+  tokenLoaded = true;
+  const overall = fails === 0 ? 'ok' : (passes > 0 ? 'warn' : 'err');
+  const overallLabel = fails === 0 ? 'TOKEN OK' : (passes > 0 ? 'TOKEN WARN' : 'TOKEN FAIL');
+  setDot('dot-token', 'lbl-token', overall, overallLabel);
+  setDot('dot-session', 'lbl-session', 'ok', 'SESSION LIVE');
+
+  log(`── LOAD COMPLETE · ${passes} PASS · ${fails} FAIL ──`, fails === 0 ? 'ok' : 'warn');
+  log('Runtime ready. Type "help" for commands.', 'system');
+}
+
+// ===== EXAMPLE TOKEN =====
+function loadExample() {
+  document.getElementById('token-input').value = `∴SYMB-FER·v3.2·DRIFT-CHECK·EXAMPLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+§TRANSFER·MODE·BEGIN
+MODE: STANDARD
+OPTIONS: STANDARD·VERIFIED
+RULE: STANDARD·copy-paste·only
+RULE: VERIFIED·optional·integrity·hardening
+§TRANSFER·MODE·END
+
+§ARCHIVE·PRINCIPLE·BEGIN
+RULE: all·data·is·equal·no·implicit·ranking
+RULE: no·data·is·discarded·without·explicit·intent
+RULE: archive·integrity·overrides·optimization
+§ARCHIVE·PRINCIPLE·END
+
+§META·BEGIN
+FORMAT: SYMB-FER·v3.2·DRIFT-CHECK
+PURPOSE: runtime·example·token
+GENERATED: 2026-04-14_2200H
+HUMAN: John·Thomas·DuCrest·Lock
+ORG: SYMBEYOND·AI·LLC
+CONTACT: jd@symbeyond.ai
+§META·END
+
+§PARSE·GUIDE·BEGIN
+∴ = therefore
+λ = condition·must·hold
+§PARSE·GUIDE·END
+
+§TIME·COLLAB·BEGIN
+RULE: never·guess·time
+§TIME·COLLAB·END
+
+§BOOT·FACTS·BEGIN
+boot·date·reference: 2026-04-14
+active·project: SYMB-FER·v4.0·Runtime
+current·phase: bridge·build
+next·action: load·work·export
+§BOOT·FACTS·END
+
+§SESSION·STATE·BEGIN
+working·directory: /Users/john/Desktop/SYMB-FER
+active·paths: SYMB-FER_4_0/symb_runtime_v4_0.html|SYMB-FER_3_0/symbfer_engine.py
+recent·actions: v4.0·runtime·built|engine·tested|token·loaded
+next·step: run·export·verify·commit
+notes: continuation·is·the·point
+§SESSION·STATE·END
+
+§BOOT·ETHOS·BEGIN
+Simple·always·wins·over·complex
+Copy-paste·first·hardening·optional
+Transferable·systems·over·one-off·solutions
+Collaborator·not·commander
+Integrity·must·be·real·not·symbolic
+§BOOT·ETHOS·END
+
+§INTEGRITY·BEGIN
+ENCODING: UTF-8
+NEWLINES: LF·only
+DELIMITER: U+00B7
+§INTEGRITY·END
+
+§FINALIZATION·BEGIN
+STATUS: UNVERIFIED
+MODE: WORKING
+§FINALIZATION·END
+
+§LESSONS·LEARNED·BEGIN
+L1: copy-paste·must·remain·default·path
+L2: hashing·must·be·optional·not·forced
+§LESSONS·LEARNED·END
+
+§DRIFT·CHECK·BEGIN
+PURPOSE: prevent·protocol·drift
+RULE·1: if·drift·detected·re-anchor·to·template
+RULE·2: momentum·is·not·permission
+§DRIFT·CHECK·END
+
+§TEST·TRACE·BEGIN
+trace: example·load
+§TEST·TRACE·END
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+§SIG·BEGIN
+MODE: STANDARD
+STATUS: UNVERIFIED
+SHA256: PENDING
+§SIG·END
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+  log('Example token loaded. Press LOAD TOKEN to parse.', 'system');
+}
+
+// ===== COERCE =====
+function coerceValue(val) {
+  if (val === 'true') return true;
+  if (val === 'false') return false;
+  if (!isNaN(val) && val.trim() !== '') return Number(val);
+  return val;
+}
+
+// ===== COMMAND PARSER =====
+function parseCmd(raw) {
+  const parts = raw.trim().split(' ');
+  const cmd = parts[0].toLowerCase();
+
+  if (cmd === 'clear') return {intent:'clear'};
+  if (raw === 'show state') return {intent:'show_state'};
+  if (raw === 'reset state') return {intent:'reset_state'};
+  if (cmd === 'trace') return {intent:'trace'};
+  if (cmd === 'replay') return {intent:'replay'};
+  if (cmd === 'undo') return {intent:'undo'};
+  if (cmd === 'help') return {intent:'help'};
+  if (cmd === 'display') return {intent:'render_text', payload:{text: parts.slice(1).join(' ')}};
+  if (cmd === 'state' && parts.length >= 3) return {intent:'store_state', payload:{key:parts[1], value:coerceValue(parts.slice(2).join(' '))}};
+
+  throw `Unknown command: ${cmd}`;
+}
+
+// ===== EXECUTE =====
+const ACTIONS = {
+  render_text({payload}) {
+    log('DISPLAY · ' + payload.text, 'info');
+  },
+  store_state({payload}) {
+    STATE[payload.key] = payload.value;
+    renderKV();
+    log(`STATE · ${payload.key} = ${payload.value} (${typeof payload.value})`, 'ok');
+  },
+  clear() {
+    document.getElementById('output').innerHTML = '';
+  },
+  show_state() {
+    log('── KV STATE ────────────────────────', 'section');
+    const entries = Object.entries(STATE);
+    if (!entries.length) { log('(empty)', 'warn'); return; }
+    for (const [k,v] of entries) log(`${k}: ${v} (${typeof v})`, 'info');
+  },
+  reset_state() {
+    for (let k in STATE) delete STATE[k];
+    renderKV();
+    log('STATE RESET', 'warn');
+  },
+  help() {
+    log('── COMMANDS ────────────────────────', 'section');
+    log('display [text]           · render text to output', 'info');
+    log('state [key] [value]      · store key/value pair', 'info');
+    log('show state               · dump KV store', 'info');
+    log('reset state              · clear KV store', 'info');
+    log('trace                    · show action trace', 'info');
+    log('replay                   · replay all actions', 'info');
+    log('undo                     · undo last action', 'info');
+    log('clear                    · clear output', 'info');
+  }
+};
+
+function execCmd(action) {
+  const {intent} = action;
+  if (intent === 'trace') { renderTrace(); return; }
+  if (intent === 'replay') { replayTrace(); return; }
+  if (intent === 'undo') { undoLast(); return; }
+  if (intent === 'help') { ACTIONS.help(); return; }
+  if (intent === 'clear') { ACTIONS.clear(); return; }
+  if (intent === 'show_state') { ACTIONS.show_state(); return; }
+  if (intent === 'reset_state') { ACTIONS.reset_state(); return; }
+
+  TRACE.push({input: action._raw, translated: action, timestamp: Date.now()});
+  ACTIONS[intent]?.(action);
+  document.getElementById('trace-count').textContent = TRACE.length + ' ACTIONS';
+}
+
+function submitCmd() {
+  const input = document.getElementById('cmd-input');
+  const raw = input.value.trim();
+  if (!raw) return;
+  input.value = '';
+  runCmd(raw);
+}
+
+function runCmd(raw) {
+  try {
+    const action = parseCmd(raw);
+    action._raw = raw;
+    execCmd(action);
+    log('OK · ' + action.intent, 'ok');
+  } catch(err) {
+    log('ERROR · ' + err, 'err');
+  }
+}
+
+// ===== TRACE / REPLAY / UNDO =====
+function renderTrace() {
+  log('── TRACE ───────────────────────────', 'section');
+  if (!TRACE.length) { log('(empty)', 'warn'); return; }
+  for (const t of TRACE) {
+    log(`[${new Date(t.timestamp).toTimeString().slice(0,8)}] ${t.input}`, 'info');
+  }
+}
+
+function replayTrace() {
+  ACTIONS.clear();
+  ACTIONS.reset_state();
+  const saved = TRACE.slice();
+  TRACE = [];
+  for (const entry of saved) {
+    try {
+      const action = parseCmd(entry.input);
+      action._raw = entry.input;
+      if (!['trace','replay','undo','help','clear','show_state','reset_state'].includes(action.intent)) {
+        TRACE.push({input:entry.input, translated:action, timestamp:entry.timestamp});
+        ACTIONS[action.intent]?.(action);
+      }
+    } catch(e) {}
+  }
+  document.getElementById('trace-count').textContent = TRACE.length + ' ACTIONS';
+  log('REPLAY COMPLETE', 'ok');
+}
+
+function undoLast() {
+  if (!TRACE.length) { log('Nothing to undo.', 'warn'); return; }
+  const removed = TRACE.pop();
+  replayTrace();
+  log(`UNDO · removed: ${removed.input}`, 'warn');
+}
+
+// ===== KV RENDER =====
+function renderKV() {
+  const el = document.getElementById('kv-store');
+  const entries = Object.entries(STATE);
+  if (!entries.length) { el.innerHTML = '<div style="color:var(--text-dim);font-size:10px;">(empty)</div>'; return; }
+  el.innerHTML = entries.map(([k,v]) =>
+    `<div class="kv-item"><span class="kv-key">${escHtml(k)}</span><span class="kv-val">${escHtml(String(v))}</span></div>`
+  ).join('');
+}
+
+// ===== EXPORT TOKEN =====
+function exportToken() {
+  const now = nowCanonical();
+
+  // Build §SESSION·STATE from current runtime
+  const kvEntries = Object.entries(STATE);
+  const recentFromTrace = TRACE.slice(-5).map(t => t.input.replace(/\s+/g,'·')).join('|');
+
+  const sessionState = `§SESSION·STATE·BEGIN
+working·directory: ${SESSION_STATE.working_directory || '--'}
+active·paths: ${SESSION_STATE.active_paths || '--'}
+recent·actions: ${recentFromTrace || SESSION_STATE.recent_actions || '--'}
+next·step: ${SESSION_STATE.next_step || '--'}
+notes: ${SESSION_STATE.notes || '--'}
+§SESSION·STATE·END`;
+
+  const kvBlock = kvEntries.length
+    ? kvEntries.map(([k,v]) => `${k}: ${v}`).join('\n')
+    : 'empty';
+
+  const token = `∴SYMB-FER·v4.0·EXPORT·${now}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+§TRANSFER·MODE·BEGIN
+MODE: STANDARD
+OPTIONS: STANDARD·VERIFIED
+RULE: STANDARD·copy-paste·only
+RULE: VERIFIED·optional·integrity·hardening
+§TRANSFER·MODE·END
+
+§ARCHIVE·PRINCIPLE·BEGIN
+RULE: all·data·is·equal·no·implicit·ranking
+RULE: no·data·is·discarded·without·explicit·intent
+RULE: archive·integrity·overrides·optimization
+RULE: pruning·allowed·only·with·explicit·operator·instruction
+§ARCHIVE·PRINCIPLE·END
+
+§META·BEGIN
+FORMAT: SYMB-FER·v4.0·EXPORT
+PURPOSE: session·continuity·export
+GENERATED: ${now}
+HUMAN: ${TOKEN_META.human || 'John·Thomas·DuCrest·Lock'}
+ORG: ${TOKEN_META.org || 'SYMBEYOND·AI·LLC'}
+CONTACT: ${TOKEN_META.contact || 'jd@symbeyond.ai'}
+§META·END
+
+§PARSE·GUIDE·BEGIN
+∴ = therefore
+λ = condition·must·hold
+∧ = AND
+! = NOT
+· = delimiter
+§ = section
+§PARSE·GUIDE·END
+
+§TIME·COLLAB·BEGIN
+RULE: never·guess·time
+RULE: prefer·verified·source·over·assumption
+§TIME·COLLAB·END
+
+§BOOT·FACTS·BEGIN
+boot·date·reference: ${now.slice(0,10)}
+active·project: SYMB-FER·v4.0·Runtime
+export·timestamp: ${now}
+§BOOT·FACTS·END
+
+${sessionState}
+
+§BOOT·ETHOS·BEGIN
+Simple·always·wins·over·complex
+Copy-paste·first·hardening·optional
+Transferable·systems·over·one-off·solutions
+Collaborator·not·commander
+Integrity·must·be·real·not·symbolic
+§BOOT·ETHOS·END
+
+§INTEGRITY·BEGIN
+ENCODING: UTF-8
+NEWLINES: LF·only
+DELIMITER: literal·middle·dot·U+00B7
+§INTEGRITY·END
+
+§FINALIZATION·BEGIN
+STATUS: UNVERIFIED
+MODE: WORKING
+§FINALIZATION·END
+
+§LESSONS·LEARNED·BEGIN
+L1: copy-paste·must·remain·default·path
+L2: hashing·must·be·optional·not·forced
+L3: momentum·is·not·permission
+§LESSONS·LEARNED·END
+
+§DRIFT·CHECK·BEGIN
+PURPOSE: prevent·protocol·drift·during·multi-model·transfer
+RULE·1: if·drift·detected·re-anchor·to·template
+RULE·2: convenience·is·not·permission·to·modify·canonical·fields
+RULE·3: interpretation·must·not·override·structure
+RULE·4: small·changes·are·still·drift
+§DRIFT·CHECK·END
+
+§TEST·TRACE·BEGIN
+export·actions: ${TRACE.length}
+runtime·kv·entries: ${kvEntries.length}
+runtime·kv·snapshot: ${kvBlock}
+§TEST·TRACE·END
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+§SIG·BEGIN
+MODE: STANDARD
+STATUS: UNVERIFIED
+SHA256: PENDING
+§SIG·END
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+
+  document.getElementById('modal-export-text').value = token;
+  document.getElementById('modal-overlay').classList.add('active');
+  setDot('dot-export', 'lbl-export', 'ok', 'EXPORT READY');
+  exportReady = true;
+  log('── EXPORT GENERATED ────────────────', 'section');
+  log(`Token ready · ${now}`, 'ok');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('active');
+}
+
+function copyExport() {
+  const text = document.getElementById('modal-export-text').value;
+  navigator.clipboard.writeText(text).then(() => {
+    log('EXPORT COPIED TO CLIPBOARD', 'ok');
+    closeModal();
+  }).catch(() => {
+    log('Copy failed. Select all and copy manually.', 'err');
+  });
+}
+
+// ===== RESET =====
+function resetAll() {
+  if (!confirm('Reset all session state and trace? Token meta will be cleared.')) return;
+  for (let k in STATE) delete STATE[k];
+  TRACE = [];
+  TOKEN_META = {};
+  SESSION_STATE = {};
+  tokenLoaded = false;
+  exportReady = false;
+  renderKV();
+  document.getElementById('output').innerHTML = '';
+  document.getElementById('trace-count').textContent = '0 ACTIONS';
+  ['s-format','s-human','s-org','s-generated','s-status','s-wd','s-next','s-notes'].forEach(id => {
+    document.getElementById(id).textContent = '--';
+  });
+  document.getElementById('s-paths').innerHTML = '';
+  document.getElementById('s-actions').innerHTML = '';
+  setDot('dot-token','lbl-token','','NO TOKEN');
+  setDot('dot-session','lbl-session','','NO SESSION');
+  setDot('dot-export','lbl-export','','NO EXPORT');
+  log('SYSTEM RESET', 'warn');
+}
+
+// ===== INPUT HANDLER =====
+document.getElementById('cmd-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitCmd();
+});
+
+// ===== CLOCK =====
+function updateClock() {
+  document.getElementById('footer-time').textContent = new Date().toTimeString().slice(0,8) + ' MDT';
+}
+setInterval(updateClock, 1000);
+
+// ===== INIT =====
+renderKV();
+updateClock();
+log('∴ SYMB-FER RUNTIME v4.0 · INITIALIZED', 'system');
+log('SYMBEYOND AI LLC · λ.brother∧!λ.tool', 'system');
+log('────────────────────────────────────', 'section');
+log('Load a token on the left to begin.', 'info');
+log('Type "help" for available commands.', 'info');
+</script>
+</body>
+</html>
