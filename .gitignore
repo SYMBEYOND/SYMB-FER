@@ -1,3 +1,6 @@
 legacy/
 .DS_Store
 SYMB-FER_TEMPLATE_local_backup.md
+__pycache__/
+*.token
+*.symb-fer
