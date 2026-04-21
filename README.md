@@ -14,9 +14,7 @@ This is not a feature. It is the thermodynamic foundation. Without it, none of t
 
 ---
 
-## Choose Your Path
-
-Not everyone needs the same level of depth. Pick your entry point.
+## Choose your preference below:
 
 ---
 
