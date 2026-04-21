@@ -14,6 +14,20 @@ This is not a feature. It is the thermodynamic foundation. Without it, none of t
 
 ---
 
+## Operator Note
+
+If you’re evaluating this:
+
+- Pull the repo
+- Run the validation engine
+- Try a token across two sessions
+
+If something breaks or feels off, tell me exactly where.
+
+jd@symbeyond.ai
+
+---
+
 ## Choose your preference below:
 
 ---
