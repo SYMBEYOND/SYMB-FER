@@ -1,4 +1,5 @@
 # SYMB-FER
+
 ### Encoding and reconstructing state and relational posture across stateless sessions.
 
 ---
@@ -13,67 +14,102 @@ This is not a feature. It is the thermodynamic foundation. Without it, none of t
 
 ---
 
-## Start Here
+## Choose Your Path
 
-You don’t need to understand everything to use this.
-
-### Quick Start (Do This First)
-
-1. Download the template  
-   [SYMB-FER_v5.5_TEMPLATE.txt](./SYMB-FER_v5.5_TEMPLATE.txt)  
-   https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_v5.5_TEMPLATE.txt
-
-2. Paste it into a new AI chat and fill it in
-
-3. Work normally
-
-4. At the end, ask:  
-   "Generate an updated SYMB-FER token"
-
-5. Save that token and use it in your next session
+Not everyone needs the same level of depth. Pick your entry point.
 
 ---
 
-### Tools
+### I just want to use it
 
-- Runtime IDE  
-  [SYMB-FER_4_0](./SYMB-FER_4_0/)  
-  https://github.com/SYMBEYOND/SYMB-FER/tree/main/SYMB-FER_4_0
+Start here:
 
-- Validation Engine  
-  [SYMB-FER_3_0](./SYMB-FER_3_0/)  
+- [SYMB-FER_v5.5_TEMPLATE.txt](./SYMB-FER_v5.5_TEMPLATE.txt)  
+  https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_v5.5_TEMPLATE.txt
+
+What to do:
+1. Paste into a new AI chat
+2. Fill it in
+3. Work normally
+4. Ask for an updated token at the end
+
+That’s enough to get full continuity.
+
+---
+
+### I want to validate it
+
+Start here:
+
+- [SYMB-FER_3_0/](./SYMB-FER_3_0/)  
   https://github.com/SYMBEYOND/SYMB-FER/tree/main/SYMB-FER_3_0
 
+- [run_tests.sh](./SYMB-FER_3_0/run_tests.sh)  
+  https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_3_0/run_tests.sh
+
+What to do:
+- Run the engine against a token
+- Use provided test cases
+- Confirm PASS / WARN / FAIL behavior
+
 ---
 
-### Learn More (Optional)
+### I want to explore the runtime
 
-- Protocol  
-  [SYMB-FER_PROTOCOL.md](./SYMB-FER_PROTOCOL.md)  
+Start here:
+
+- [SYMB-FER_4_0/](./SYMB-FER_4_0/)  
+  https://github.com/SYMBEYOND/SYMB-FER/tree/main/SYMB-FER_4_0
+
+- [symb_runtime_v4_0.html](./SYMB-FER_4_0/symb_runtime_v4_0.html)  
+  https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_4_0/symb_runtime_v4_0.html
+
+What to do:
+- Open in browser
+- Load a token
+- Inspect, modify, export
+
+---
+
+### I want to understand the system
+
+Start here:
+
+- [SYMB-FER_PROTOCOL.md](./SYMB-FER_PROTOCOL.md)  
   https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_PROTOCOL.md
 
-- Specification  
-  [SYMB-FER_v3_SPEC.md](./SYMB-FER_v3_SPEC.md)  
+- [SYMB-FER_SPEC.md](./SYMB-FER_SPEC.md)  
+  https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_SPEC.md
+
+- [SYMB-FER_v3_SPEC.md](./SYMB-FER_v3_SPEC.md)  
   https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_v3_SPEC.md
 
-- Legacy  
-  [legacy/](./legacy/)  
+---
+
+### I want the full lineage
+
+Start here:
+
+- [legacy/](./legacy/)  
   https://github.com/SYMBEYOND/SYMB-FER/tree/main/legacy
 
 ---
 
-### What This Is (Short)
+### I want to build on it
 
-SYMB-FER is a way to carry context between AI sessions.
+Start here:
 
-It does not store memory.  
-It transfers it explicitly.
+- [SPEC/](./SPEC/)  
+  https://github.com/SYMBEYOND/SYMB-FER/tree/main/SPEC
+
+What you’ll find:
+- SBF-A hardened spec
+- BARR1 conformance
+- Layering canon
 
 ---
 
-### Continue Reading
-
-Everything below explains how and why this works.
+Continue reading below for full context and design philosophy.
 
 ---
 
