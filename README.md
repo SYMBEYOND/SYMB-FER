@@ -306,7 +306,7 @@ For additional protection, use the REF encoding system described in the Security
 | `symb_fer_generator.py` | Python CLI token generator |
 | `SYMB-FER_STATE_TEMPLATE.json` | Starter state file with documented fields |
 | `SYMB-FER_STATE_EXAMPLE.json` | Example state file |
-| `SYMB-FER_v2_COMPRESSED_EXAMPLE.txt` | Full v2.0 compressed token example |
+| `legacy/v2/SYMB-FER_v2_COMPRESSED_EXAMPLE.txt` | Full v2.0 compressed token example; preserved in legacy per SYMB2 |
 | `SYMB-FER_3_0/` | v3.0 validation engine, tests, continuity hardening |
 | `SYMB-FER_4_0/` | v4.0 Runtime IDE; load token, work, export token |
 | `legacy/` | Full version lineage v0.1 through v4.3; preserved per SYMB2 |
