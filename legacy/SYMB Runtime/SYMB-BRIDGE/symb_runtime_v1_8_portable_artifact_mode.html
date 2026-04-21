@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SYMB Runtime v1.8</title>
+<style>
+* { margin:0; box-sizing:border-box; font-family:Courier New, monospace; }
+body { background:#0a0f0f; color:#0fc; display:flex; height:100vh; gap:6px; padding:6px; }
+.panel { border:1px solid #a0f; background:#0f1414; padding:8px; overflow:auto; }
+#left { width:360px; }
+#right { width:260px; }
+#main { flex:1; display:flex; flex-direction:column; gap:6px; }
+#output { flex:1; border:1px solid #a0f; padding:8px; overflow:auto; white-space:pre-wrap; }
+#input { border:1px solid #a0f; padding:6px; background:#0f1414; color:#0fc; width:100%; }
+.log { margin-bottom:6px; }
+.ok { border-left:3px solid #0fc; padding-left:6px; }
+.err { border-left:3px solid #f55; padding-left:6px; }
+</style>
+</head>
+<body>
+
+<div id="left" class="panel"></div>
+
+<div id="main">
+  <div id="output"></div>
+  <input id="input" placeholder='Enter command...'>
+</div>
+
+<div id="right" class="panel"></div>
+
+<script>
+
+const STATE = {};
+let TRACE = [];
+let LEDGER = [];
+const SESSION_META = {
+  lastSaveStatus: 'never',
+  lastLoadStatus: 'never',
+  lastExportStatus: 'never',
+  lastImportStatus: 'never'
+};
+
+// ===== TYPE COERCION =====
+function coerceValue(val) {
+  if (val === "true") return true;
+  if (val === "false") return false;
+  if (!isNaN(val) && val.trim() !== "") return Number(val);
+  return val;
+}
+
+// ===== ACTIONS =====
+const ACTIONS = {
+  render_text({payload}) {
+    const el = document.getElementById('output');
+    const div = document.createElement('div');
+    div.textContent = payload.text;
+    el.appendChild(div);
+  },
+
+  store_state({payload}) {
+    if (!payload.key) throw "Missing key";
+    STATE[payload.key] = payload.value;
+    renderState();
+  },
+
+  clear() {
+    document.getElementById('output').innerHTML = '';
+  },
+
+  show_state() {
+    const out = document.getElementById('output');
+    const div = document.createElement('div');
+    div.textContent = JSON.stringify(STATE, null, 2);
+    out.appendChild(div);
+  },
+
+  reset_state() {
+    for (let k in STATE) delete STATE[k];
+    renderState();
+  }
+};
+
+// ===== UI =====
+function renderState() {
+  const el = document.getElementById('right');
+  const entries = Object.entries(STATE);
+  el.innerText = "STATE:\n" + (entries.length ? entries.map(([k,v]) => k + ": " + v + " (" + typeof v + ")").join("\n") : "(empty)");
+}
+
+function log(msg, err=false) {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.className = 'log ' + (err ? 'err' : 'ok');
+  div.textContent = msg;
+  out.appendChild(div);
+}
+
+function formatCanonical(action) {
+  if (!action) return '(none)';
+  return JSON.stringify(action, null, 2);
+}
+
+function ledgerSummary() {
+  const counts = { accepted: 0, blocked: 0, rejected: 0, ready: 0, unknown: 0 };
+  for (const entry of LEDGER) {
+    counts[entry.decision] = (counts[entry.decision] || 0) + 1;
+  }
+  return `entries: ${LEDGER.length}\naccepted: ${counts.accepted}\nblocked: ${counts.blocked}\nrejected: ${counts.rejected}`;
+}
+
+function storageSummary() {
+  const hasSession = !!localStorage.getItem('symb_session');
+  const hasTrace = !!localStorage.getItem('symb_trace');
+
+  if (hasSession) return 'session+trace available';
+  if (hasTrace) return 'legacy trace available';
+  return 'none';
+}
+
+function getLastReplayableEntry() {
+  return TRACE.length ? TRACE[TRACE.length - 1] : null;
+}
+
+function getLastLedgerEntry() {
+  return LEDGER.length ? LEDGER[LEDGER.length - 1] : null;
+}
+
+function sessionSnapshot() {
+  const lastReplayable = getLastReplayableEntry();
+  const lastLedger = getLastLedgerEntry();
+
+  return {
+    traceCount: TRACE.length,
+    ledgerCount: LEDGER.length,
+    lastReplayableIntent: lastReplayable?.translated?.intent || '(none)',
+    lastReplayableSource: lastReplayable?.translated?.meta?.source || '(none)',
+    lastDecision: lastLedger?.decision || '(none)',
+    lastDecisionStage: lastLedger?.stage || '(none)',
+    lastLedgerIntent: lastLedger?.intent || '(none)',
+    lastSave: SESSION_META.lastSaveStatus,
+    lastLoad: SESSION_META.lastLoadStatus,
+    lastExport: SESSION_META.lastExportStatus,
+    lastImport: SESSION_META.lastImportStatus,
+    storage: storageSummary()
+  };
+}
+
+function sessionSummary() {
+  const snap = sessionSnapshot();
+  return `trace count: ${snap.traceCount}\nledger count: ${snap.ledgerCount}\nlast replayable intent: ${snap.lastReplayableIntent}\nlast replayable source: ${snap.lastReplayableSource}\nlast decision: ${snap.lastDecision}\nlast decision stage: ${snap.lastDecisionStage}\nlast ledger intent: ${snap.lastLedgerIntent}\nlast save: ${snap.lastSave}\nlast load: ${snap.lastLoad}\nlast export: ${snap.lastExport}\nlast import: ${snap.lastImport}\nstorage: ${snap.storage}`;
+}
+
+function renderInterpretation(info) {
+  document.getElementById('left').innerText =
+`ACTIONS:
+- display
+- state
+- clear
+- show state
+- reset state
+- trace
+- ledger
+- replay
+- undo
+- save
+- load
+- status
+- export
+- import {json or artifact}
+
+- clear ledger
+
+BRIDGE:
+- shorthand → canonical
+- SYMB → canonical
+- SYMB2 → canonical
+- canonical → validation → policy → runtime
+
+POLICY:
+- replayable actions only execute when consent = granted
+- replayable actions only execute when risk = low
+- blocked actions do not enter trace
+
+LEDGER:
+- records accepted, blocked, and rejected decisions
+- not replayed
+- persisted with session saves
+${ledgerSummary()}
+
+SESSION:
+${sessionSummary()}
+
+DECISION:
+intent: ${info.intent || 'unknown'}
+decision: ${info.decision || 'unknown'}
+stage: ${info.stage || 'unknown'}
+reason: ${info.reason || '(none)'}
+
+CANONICAL:
+${formatCanonical(info.canonical)}`;
+}
+
+function renderTrace() {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.textContent = JSON.stringify(TRACE, null, 2);
+  out.appendChild(div);
+}
+
+function renderLedger() {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.textContent = JSON.stringify(LEDGER, null, 2);
+  out.appendChild(div);
+}
+
+function renderStatus() {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.textContent = JSON.stringify(sessionSnapshot(), null, 2);
+  out.appendChild(div);
+}
+
+function buildPortableArtifact() {
+  const snap = sessionSnapshot();
+  return {
+    artifact: 'SYMB-FER',
+    artifactVersion: '1.0',
+    runtime: 'SYMB Runtime v1.8',
+    generatedAt: new Date().toISOString(),
+    generatedAtEpoch: Date.now(),
+    summary: {
+      traceCount: snap.traceCount,
+      ledgerCount: snap.ledgerCount,
+      lastReplayableIntent: snap.lastReplayableIntent,
+      lastReplayableSource: snap.lastReplayableSource,
+      lastDecision: snap.lastDecision,
+      lastDecisionStage: snap.lastDecisionStage,
+      storage: snap.storage
+    },
+    session: {
+      trace: TRACE,
+      ledger: LEDGER
+    }
+  };
+}
+
+function renderExportData() {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.textContent = JSON.stringify(buildPortableArtifact(), null, 2);
+  out.appendChild(div);
+}
+
+function recordDecision(raw, info) {
+  LEDGER.push({
+    input: raw,
+    intent: info.intent || 'unknown',
+    decision: info.decision || 'unknown',
+    stage: info.stage || 'unknown',
+    reason: info.reason || '(none)',
+    canonical: info.canonical || null,
+    timestamp: Date.now()
+  });
+}
+
+function fail(stage, reason, intent='unknown', canonical=null, decision='rejected') {
+  throw { stage, reason, intent, canonical, decision };
+}
+
+function normalizeError(err) {
+  if (err && typeof err === 'object' && 'stage' in err && 'reason' in err) {
+    return err;
+  }
+  return {
+    stage: 'unknown',
+    reason: String(err),
+    intent: 'unknown',
+    canonical: null,
+    decision: 'rejected'
+  };
+}
+
+// ===== CANONICAL HELPERS =====
+function makeCanonicalAction({
+  intent,
+  payload = {},
+  risk = 'low',
+  consent = 'granted',
+  source = 'unknown',
+  raw = '',
+  adapter = 'unknown'
+}) {
+  return {
+    intent,
+    payload,
+    risk,
+    consent,
+    meta: {
+      source,
+      raw,
+      adapter,
+      timestamp: Date.now()
+    }
+  };
+}
+
+function isControlAction(action) {
+  return [
+    'clear',
+    'show_state',
+    'reset_state',
+    'trace',
+    'ledger',
+    'replay',
+    'undo',
+    'save',
+    'load',
+    'status',
+    'export',
+    'import',
+    'clear_ledger'
+  ].includes(action.intent);
+}
+
+function isReplayableAction(action) {
+  return ['render_text', 'store_state'].includes(action.intent);
+}
+
+// ===== VALIDATION =====
+function validateCanonicalAction(action) {
+  const errors = [];
+
+  if (!action || typeof action !== 'object') {
+    errors.push('action must be an object');
+    return errors;
+  }
+
+  if (!isReplayableAction(action)) {
+    errors.push(`unsupported canonical intent: ${action.intent}`);
+    return errors;
+  }
+
+  if (!['low', 'medium', 'high'].includes(action.risk)) {
+    errors.push(`invalid risk: ${action.risk}`);
+  }
+
+  if (!['granted', 'seeking', 'denied'].includes(action.consent)) {
+    errors.push(`invalid consent: ${action.consent}`);
+  }
+
+  if (!action.meta || typeof action.meta !== 'object') {
+    errors.push('missing meta');
+  } else {
+    if (!['shorthand', 'symb', 'symb2'].includes(action.meta.source)) {
+      errors.push(`invalid meta.source: ${action.meta.source}`);
+    }
+    if (typeof action.meta.raw !== 'string') {
+      errors.push('meta.raw must be string');
+    }
+    if (typeof action.meta.adapter !== 'string') {
+      errors.push('meta.adapter must be string');
+    }
+    if (typeof action.meta.timestamp !== 'number' || !Number.isFinite(action.meta.timestamp)) {
+      errors.push('meta.timestamp must be finite number');
+    }
+  }
+
+  if (!action.payload || typeof action.payload !== 'object') {
+    errors.push('payload must be an object');
+    return errors;
+  }
+
+  if (action.intent === 'render_text') {
+    if (typeof action.payload.text !== 'string') {
+      errors.push('render_text requires payload.text:string');
+    }
+  }
+
+  if (action.intent === 'store_state') {
+    if (typeof action.payload.key !== 'string' || action.payload.key.trim() === '') {
+      errors.push('store_state requires payload.key:string');
+    }
+
+    const valueType = typeof action.payload.value;
+    if (!['string', 'number', 'boolean'].includes(valueType)) {
+      errors.push('store_state requires payload.value:string|number|boolean');
+    }
+
+    if (valueType === 'number' && !Number.isFinite(action.payload.value)) {
+      errors.push('store_state payload.value:number must be finite');
+    }
+  }
+
+  return errors;
+}
+
+function assertValidCanonicalAction(action) {
+  const errors = validateCanonicalAction(action);
+  if (errors.length) {
+    fail('validation', errors.join('; '), action?.intent || 'unknown', action, 'rejected');
+  }
+}
+
+// ===== POLICY =====
+function evaluatePolicy(action) {
+  if (!isReplayableAction(action)) {
+    return { allowed: true, reason: 'control action' };
+  }
+
+  if (action.consent !== 'granted') {
+    return {
+      allowed: false,
+      reason: `Policy blocked: consent must be granted, got ${action.consent}`
+    };
+  }
+
+  if (action.risk !== 'low') {
+    return {
+      allowed: false,
+      reason: `Policy blocked: risk must be low, got ${action.risk}`
+    };
+  }
+
+  return { allowed: true, reason: 'policy passed' };
+}
+
+function assertPolicyAllows(action) {
+  const result = evaluatePolicy(action);
+  if (!result.allowed) {
+    fail('policy', result.reason, action.intent, action, 'blocked');
+  }
+  return result;
+}
+
+// ===== REPLAY =====
+function replayTrace() {
+  ACTIONS.clear();
+  ACTIONS.reset_state();
+
+  for (let entry of TRACE) {
+    assertValidCanonicalAction(entry.translated);
+    assertPolicyAllows(entry.translated);
+    ACTIONS[entry.translated.intent]?.(entry.translated);
+  }
+
+  log("REPLAY COMPLETE");
+  return {
+    intent: 'replay',
+    decision: 'accepted',
+    stage: 'control',
+    reason: 'trace replayed successfully',
+    canonical: null
+  };
+}
+
+// ===== UNDO =====
+function undoLast() {
+  TRACE.pop();
+  replayTrace();
+  log("UNDO COMPLETE");
+  return {
+    intent: 'undo',
+    decision: 'accepted',
+    stage: 'control',
+    reason: 'last replayable action removed and trace replayed',
+    canonical: null
+  };
+}
+
+// ===== PERSISTENCE =====
+function saveSession() {
+  const session = { trace: TRACE, ledger: LEDGER };
+  localStorage.setItem("symb_session", JSON.stringify(session));
+  localStorage.setItem("symb_trace", JSON.stringify(TRACE));
+  SESSION_META.lastSaveStatus = `saved ${new Date().toLocaleTimeString()}`;
+  log("SESSION SAVED");
+  return {
+    intent: 'save',
+    decision: 'accepted',
+    stage: 'control',
+    reason: 'trace and ledger saved to localStorage',
+    canonical: null
+  };
+}
+
+function loadSession() {
+  const sessionData = localStorage.getItem("symb_session");
+  const traceData = localStorage.getItem("symb_trace");
+
+  if (!sessionData && !traceData) {
+    SESSION_META.lastLoadStatus = 'failed: no saved session';
+    fail('control', 'NO SAVED SESSION', 'load', null, 'rejected');
+  }
+
+  let parsedTrace = [];
+  let parsedLedger = [];
+
+  if (sessionData) {
+    const session = JSON.parse(sessionData);
+    if (!session || typeof session !== 'object') {
+      SESSION_META.lastLoadStatus = 'failed: saved session is not an object';
+      fail('control', 'Saved session is not an object', 'load', null, 'rejected');
+    }
+    if (!Array.isArray(session.trace)) {
+      SESSION_META.lastLoadStatus = 'failed: saved session trace is not an array';
+      fail('control', 'Saved session trace is not an array', 'load', null, 'rejected');
+    }
+    parsedTrace = session.trace;
+    parsedLedger = Array.isArray(session.ledger) ? session.ledger : [];
+  } else {
+    const parsed = JSON.parse(traceData);
+    if (!Array.isArray(parsed)) {
+      SESSION_META.lastLoadStatus = 'failed: saved session is not a trace array';
+      fail('control', 'Saved session is not a trace array', 'load', null, 'rejected');
+    }
+    parsedTrace = parsed;
+    parsedLedger = [];
+  }
+
+  for (const entry of parsedTrace) {
+    assertValidCanonicalAction(entry.translated);
+    assertPolicyAllows(entry.translated);
+  }
+
+  TRACE = parsedTrace;
+  LEDGER = parsedLedger;
+  replayTrace();
+  SESSION_META.lastLoadStatus = `loaded ${new Date().toLocaleTimeString()}`;
+  log("SESSION LOADED");
+  return {
+    intent: 'load',
+    decision: 'accepted',
+    stage: 'control',
+    reason: 'trace and ledger loaded from localStorage',
+    canonical: null
+  };
+}
+
+function importSession(payloadRaw) {
+  if (!payloadRaw || !payloadRaw.trim()) {
+    SESSION_META.lastImportStatus = 'failed: empty import payload';
+    fail('control', 'Import requires JSON payload after import', 'import', null, 'rejected');
+  }
+
+  let parsedInput;
+  try {
+    parsedInput = JSON.parse(payloadRaw);
+  } catch {
+    SESSION_META.lastImportStatus = 'failed: invalid import json';
+    fail('control', 'Import payload is not valid JSON', 'import', null, 'rejected');
+  }
+
+  let parsedTrace = [];
+  let parsedLedger = [];
+
+  if (Array.isArray(parsedInput)) {
+    parsedTrace = parsedInput;
+    parsedLedger = [];
+  } else if (parsedInput && typeof parsedInput === 'object' && parsedInput.artifact === 'SYMB-FER') {
+    if (!parsedInput.session || typeof parsedInput.session !== 'object') {
+      SESSION_META.lastImportStatus = 'failed: artifact session missing';
+      fail('control', 'Import artifact session is missing', 'import', null, 'rejected');
+    }
+    if (!Array.isArray(parsedInput.session.trace)) {
+      SESSION_META.lastImportStatus = 'failed: artifact trace is not an array';
+      fail('control', 'Import artifact trace is not an array', 'import', null, 'rejected');
+    }
+    if (parsedInput.session.ledger !== undefined && !Array.isArray(parsedInput.session.ledger)) {
+      SESSION_META.lastImportStatus = 'failed: artifact ledger is not an array';
+      fail('control', 'Import artifact ledger is not an array', 'import', null, 'rejected');
+    }
+    parsedTrace = parsedInput.session.trace;
+    parsedLedger = Array.isArray(parsedInput.session.ledger) ? parsedInput.session.ledger : [];
+  } else if (parsedInput && typeof parsedInput === 'object') {
+    if (!Array.isArray(parsedInput.trace)) {
+      SESSION_META.lastImportStatus = 'failed: import trace is not an array';
+      fail('control', 'Import session trace is not an array', 'import', null, 'rejected');
+    }
+    if (parsedInput.ledger !== undefined && !Array.isArray(parsedInput.ledger)) {
+      SESSION_META.lastImportStatus = 'failed: import ledger is not an array';
+      fail('control', 'Import session ledger is not an array', 'import', null, 'rejected');
+    }
+    parsedTrace = parsedInput.trace;
+    parsedLedger = Array.isArray(parsedInput.ledger) ? parsedInput.ledger : [];
+  } else {
+    SESSION_META.lastImportStatus = 'failed: import payload is not an object or array';
+    fail('control', 'Import payload must be a session object or legacy trace array', 'import', null, 'rejected');
+  }
+
+  for (const entry of parsedTrace) {
+    if (!entry || typeof entry !== 'object' || !entry.translated) {
+      SESSION_META.lastImportStatus = 'failed: import trace entry missing translated action';
+      fail('control', 'Import trace entry missing translated action', 'import', null, 'rejected');
+    }
+    assertValidCanonicalAction(entry.translated);
+    assertPolicyAllows(entry.translated);
+  }
+
+  TRACE = parsedTrace;
+  LEDGER = parsedLedger;
+  replayTrace();
+  SESSION_META.lastImportStatus = `imported ${new Date().toLocaleTimeString()}`;
+  log('SESSION IMPORTED');
+  return {
+    intent: 'import',
+    decision: 'accepted',
+    stage: 'control',
+    reason: 'session imported from JSON or SYMB-FER artifact',
+    canonical: null
+  };
+}
+
+// ===== ADAPTERS =====
+function fromShorthand(raw) {
+  const parts = raw.split(' ');
+
+  if (raw === 'clear') return { intent: 'clear' };
+  if (raw === 'show state') return { intent: 'show_state' };
+  if (raw === 'reset state') return { intent: 'reset_state' };
+  if (raw === 'trace') return { intent: 'trace' };
+  if (raw === 'ledger') return { intent: 'ledger' };
+  if (raw === 'replay') return { intent: 'replay' };
+  if (raw === 'undo') return { intent: 'undo' };
+  if (raw === 'save') return { intent: 'save' };
+  if (raw === 'load') return { intent: 'load' };
+  if (raw === 'status') return { intent: 'status' };
+  if (raw === 'export') return { intent: 'export' };
+  if (raw === 'clear ledger') return { intent: 'clear_ledger' };
+  if (raw.startsWith('import ')) return { intent: 'import', payload: { raw: raw.slice(7).trim() } };
+
+  if (parts[0] === 'display') {
+    return makeCanonicalAction({
+      intent: 'render_text',
+      payload: { text: parts.slice(1).join(' ') },
+      source: 'shorthand',
+      raw,
+      adapter: 'fromShorthand'
+    });
+  }
+
+  if (parts[0] === 'state') {
+    return makeCanonicalAction({
+      intent: 'store_state',
+      payload: {
+        key: parts[1],
+        value: coerceValue(parts.slice(2).join(' '))
+      },
+      source: 'shorthand',
+      raw,
+      adapter: 'fromShorthand'
+    });
+  }
+
+  fail('translation', 'Unknown shorthand command', 'unknown', null, 'rejected');
+}
+
+function fromSYMB(obj, raw) {
+  if (obj.intent === 'render') {
+    if (typeof obj.text !== 'string') {
+      fail('translation', 'Invalid SYMB form: render requires text:string', 'render', null, 'rejected');
+    }
+
+    return makeCanonicalAction({
+      intent: 'render_text',
+      payload: { text: obj.text },
+      risk: obj.risk || 'low',
+      consent: obj.consent || 'granted',
+      source: 'symb',
+      raw,
+      adapter: 'fromSYMB'
+    });
+  }
+
+  if (obj.intent === 'remember') {
+    if (typeof obj.key !== 'string' || obj.key.trim() === '') {
+      fail('translation', 'Invalid SYMB form: remember requires key:string', 'remember', null, 'rejected');
+    }
+
+    return makeCanonicalAction({
+      intent: 'store_state',
+      payload: {
+        key: obj.key,
+        value: obj.value
+      },
+      risk: obj.risk || 'low',
+      consent: obj.consent || 'granted',
+      source: 'symb',
+      raw,
+      adapter: 'fromSYMB'
+    });
+  }
+
+  fail('translation', 'Unknown SYMB form: supported intents are render, remember', obj.intent || 'unknown', null, 'rejected');
+}
+
+function fromSYMB2(obj, raw) {
+  if (obj.act === 'render_text') {
+    if (typeof obj.args?.text !== 'string') {
+      fail('translation', 'Invalid SYMB2 form: render_text requires args.text:string', 'render_text', null, 'rejected');
+    }
+
+    return makeCanonicalAction({
+      intent: 'render_text',
+      payload: { text: obj.args.text },
+      risk: obj.policy?.risk || 'low',
+      consent: obj.policy?.consent || 'granted',
+      source: 'symb2',
+      raw,
+      adapter: 'fromSYMB2'
+    });
+  }
+
+  if (obj.act === 'store_state') {
+    if (typeof obj.args?.key !== 'string' || obj.args.key.trim() === '') {
+      fail('translation', 'Invalid SYMB2 form: store_state requires args.key:string', 'store_state', null, 'rejected');
+    }
+
+    return makeCanonicalAction({
+      intent: 'store_state',
+      payload: {
+        key: obj.args.key,
+        value: obj.args.value
+      },
+      risk: obj.policy?.risk || 'low',
+      consent: obj.policy?.consent || 'granted',
+      source: 'symb2',
+      raw,
+      adapter: 'fromSYMB2'
+    });
+  }
+
+  fail('translation', 'Unknown SYMB2 form: supported acts are render_text, store_state', obj.act || 'unknown', null, 'rejected');
+}
+
+// ===== INPUT PARSER =====
+function parseInput(raw) {
+  if (!raw.startsWith('{')) {
+    return fromShorthand(raw);
+  }
+
+  let obj;
+  try {
+    obj = JSON.parse(raw);
+  } catch {
+    fail('translation', 'Invalid JSON', 'unknown', null, 'rejected');
+  }
+
+  if (typeof obj.intent === 'string') {
+    return fromSYMB(obj, raw);
+  }
+
+  if (typeof obj.act === 'string') {
+    return fromSYMB2(obj, raw);
+  }
+
+  fail('translation', 'Unknown JSON bridge form', 'unknown', null, 'rejected');
+}
+
+// ===== EXECUTION =====
+document.getElementById('input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const raw = e.target.value.trim();
+    if (!raw) return;
+
+    try {
+      const action = parseInput(raw);
+      let info = null;
+
+      if (isControlAction(action)) {
+        if (action.intent === 'trace') {
+          renderTrace();
+          info = {
+            intent: action.intent,
+            decision: 'accepted',
+            stage: 'control',
+            reason: 'trace displayed',
+            canonical: null
+          };
+        } else if (action.intent === 'ledger') {
+          renderLedger();
+          info = {
+            intent: action.intent,
+            decision: 'accepted',
+            stage: 'control',
+            reason: 'decision ledger displayed',
+            canonical: null
+          };
+        } else if (action.intent === 'replay') {
+          info = replayTrace();
+        } else if (action.intent === 'undo') {
+          info = undoLast();
+        } else if (action.intent === 'save') {
+          info = saveSession();
+        } else if (action.intent === 'load') {
+          info = loadSession();
+        } else if (action.intent === 'status') {
+          renderStatus();
+          info = {
+            intent: action.intent,
+            decision: 'accepted',
+            stage: 'control',
+            reason: 'session status displayed',
+            canonical: null
+          };
+        } else if (action.intent === 'export') {
+          renderExportData();
+          SESSION_META.lastExportStatus = `exported ${new Date().toLocaleTimeString()}`;
+          info = {
+            intent: action.intent,
+            decision: 'accepted',
+            stage: 'control',
+            reason: 'portable SYMB-FER artifact exported to output',
+            canonical: null
+          };
+        } else if (action.intent === 'import') {
+          info = importSession(action.payload?.raw || '');
+        } else if (action.intent === 'clear_ledger') {
+          LEDGER = [];
+          info = {
+            intent: 'clear_ledger',
+            decision: 'accepted',
+            stage: 'control',
+            reason: 'decision ledger cleared',
+            canonical: null
+          };
+        } else if (action.intent === 'clear') {
+          ACTIONS.clear();
+          info = {
+            intent: action.intent,
+            decision: 'accepted',
+            stage: 'control',
+            reason: 'output cleared',
+            canonical: null
+          };
+        } else if (action.intent === 'show_state') {
+          ACTIONS.show_state();
+          info = {
+            intent: action.intent,
+            decision: 'accepted',
+            stage: 'control',
+            reason: 'state displayed',
+            canonical: null
+          };
+        } else if (action.intent === 'reset_state') {
+          ACTIONS.reset_state();
+          info = {
+            intent: action.intent,
+            decision: 'accepted',
+            stage: 'control',
+            reason: 'state reset',
+            canonical: null
+          };
+        }
+
+        recordDecision(raw, info);
+        renderInterpretation(info);
+        log("OK: " + action.intent);
+      } else if (isReplayableAction(action)) {
+        assertValidCanonicalAction(action);
+        const policy = assertPolicyAllows(action);
+
+        TRACE.push({
+          input: raw,
+          translated: action,
+          timestamp: action.meta.timestamp
+        });
+
+        ACTIONS[action.intent]?.(action);
+        info = {
+          intent: action.intent,
+          decision: 'accepted',
+          stage: 'execution',
+          reason: policy.reason,
+          canonical: action
+        };
+        recordDecision(raw, info);
+        renderInterpretation(info);
+        log("OK: " + action.intent);
+      } else {
+        fail('execution', 'Unrecognized action class', action.intent || 'unknown', action, 'rejected');
+      }
+
+    } catch (err) {
+      const info = normalizeError(err);
+      recordDecision(raw, info);
+      renderInterpretation({
+        intent: info.intent,
+        decision: info.decision,
+        stage: info.stage,
+        reason: info.reason,
+        canonical: info.canonical
+      });
+      log("ERROR: " + info.reason, true);
+    }
+
+    e.target.value = '';
+  }
+});
+
+// ===== INIT =====
+renderState();
+renderInterpretation({
+  intent: 'system',
+  decision: 'ready',
+  stage: 'ready',
+  reason: 'awaiting input; portable artifact mode active',
+  canonical: null
+});
+log("SYMB Runtime v1.8 Ready");
+
+</script>
+
+</body>
+</html>

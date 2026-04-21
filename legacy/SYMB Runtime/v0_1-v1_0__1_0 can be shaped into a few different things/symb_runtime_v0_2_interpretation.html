@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SYMB Runtime v0.1</title>
+
+<style>
+* { margin:0; box-sizing:border-box; font-family:Courier New, monospace; }
+
+body {
+  background:#0a0f0f;
+  color:#0fc;
+  display:flex;
+  height:100vh;
+  gap:6px;
+  padding:6px;
+}
+
+.panel {
+  border:1px solid #a0f;
+  background:#0f1414;
+  padding:8px;
+  overflow:auto;
+}
+
+#left { width:260px; }
+#right { width:260px; }
+
+#main {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+#output {
+  flex:1;
+  border:1px solid #a0f;
+  padding:8px;
+  overflow:auto;
+}
+
+#input {
+  border:1px solid #a0f;
+  padding:6px;
+  background:#0f1414;
+  color:#0fc;
+  width:100%;
+}
+
+.log { margin-bottom:6px; }
+.ok { border-left:3px solid #0fc; padding-left:6px; }
+.err { border-left:3px solid #f55; padding-left:6px; }
+
+.button {
+  background:#0a0f0f;
+  color:#0fc;
+  border:1px solid #a0f;
+  padding:6px;
+  cursor:pointer;
+}
+
+.grid {
+  display:grid;
+  gap:6px;
+  grid-template-columns:repeat(auto-fit,minmax(80px,1fr));
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="left" class="panel"></div>
+
+<div id="main">
+  <div id="output"></div>
+  <input id="input" placeholder='Enter JSON action...'>
+</div>
+
+<div id="right" class="panel"></div>
+
+<script>
+
+// ===== STATE =====
+const STATE = {};
+
+// ===== ALLOWED ACTIONS =====
+const ACTIONS = {
+
+  render_text({target, payload}) {
+    const el = getTarget(target);
+    const div = document.createElement('div');
+    div.textContent = payload.text;
+    el.appendChild(div);
+  },
+
+  render_html({target, payload}) {
+    const el = getTarget(target);
+    const div = document.createElement('div');
+    div.innerHTML = payload.html;
+    el.appendChild(div);
+  },
+
+  make_button({target, payload}) {
+    const el = getTarget(target);
+    const btn = document.createElement('button');
+    btn.className = 'button';
+    btn.textContent = payload.label || 'Click';
+    btn.onclick = () => log(`Button clicked: ${payload.label || 'Click'}`);
+    el.appendChild(btn);
+  },
+
+  make_grid({target, payload}) {
+    const el = getTarget(target);
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+
+    (payload.items || []).forEach(item => {
+      const d = document.createElement('div');
+      d.textContent = item;
+      d.className = 'panel';
+      grid.appendChild(d);
+    });
+
+    el.appendChild(grid);
+  },
+
+  store_state({payload}) {
+    if (!payload.key) throw 'Missing key';
+    STATE[payload.key] = payload.value;
+    renderState();
+  }
+
+};
+
+function renderState() {
+  const el = document.getElementById('right');
+  const entries = Object.entries(STATE);
+
+  if (entries.length === 0) {
+    el.innerText = 'STATE:\n(empty)';
+    return;
+  }
+
+  el.innerText = 'STATE:\n' + entries.map(([k, v]) => `${k}: ${v}`).join('\n');
+}
+
+// ===== HELPERS =====
+
+function getTarget(t) {
+  if (t === 'main') return document.getElementById('output');
+  if (t === 'left') return document.getElementById('left');
+  if (t === 'right') return document.getElementById('right');
+  throw 'Invalid target';
+}
+
+function log(msg, isError = false) {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.className = 'log ' + (isError ? 'err' : 'ok');
+  div.textContent = msg;
+  out.appendChild(div);
+  out.scrollTop = out.scrollHeight;
+}
+
+// ===== VALIDATION =====
+
+function validate(action) {
+  if (!action.intent) throw 'Missing intent';
+  if (!ACTIONS[action.intent]) throw 'Unknown intent';
+
+  if (!action.target && action.intent !== 'store_state') {
+    throw 'Missing target';
+  }
+
+  if (!action.payload) throw 'Missing payload';
+
+  if (action.risk && action.risk !== 'low') {
+    throw 'Blocked: risk too high';
+  }
+
+  if (action.consent !== 'granted') {
+    throw 'Consent not granted';
+  }
+}
+
+// ===== EXECUTION =====
+
+function execute(action) {
+  validate(action);
+  ACTIONS[action.intent](action);
+}
+
+// ===== INPUT HANDLER =====
+
+document.getElementById('input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const raw = e.target.value.trim();
+    if (!raw) return;
+
+    let rawIntent = 'unknown';
+
+    try {
+      const action = JSON.parse(raw);
+      rawIntent = action.intent || 'unknown';
+      execute(action);
+      renderInterpretation(explainAcceptance(action));
+      log('OK: ' + action.intent);
+    } catch (err) {
+      renderInterpretation(explainRejection(rawIntent, err));
+      log('ERROR: ' + err, true);
+    }
+
+    e.target.value = '';
+  }
+});
+
+// ===== INIT =====
+
+renderInterpretation({
+  intent: 'system',
+  category: 'startup',
+  decision: 'ready',
+  reason: 'runtime initialized'
+});
+
+renderState();
+log('SYMB Runtime v0.1 Ready');
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SYMB Runtime v0.9</title>
+<style>
+* { margin:0; box-sizing:border-box; font-family:Courier New, monospace; }
+body { background:#0a0f0f; color:#0fc; display:flex; height:100vh; gap:6px; padding:6px; }
+.panel { border:1px solid #a0f; background:#0f1414; padding:8px; overflow:auto; }
+#left { width:260px; }
+#right { width:260px; }
+#main { flex:1; display:flex; flex-direction:column; gap:6px; }
+#output { flex:1; border:1px solid #a0f; padding:8px; overflow:auto; }
+#input { border:1px solid #a0f; padding:6px; background:#0f1414; color:#0fc; width:100%; }
+.log { margin-bottom:6px; }
+.ok { border-left:3px solid #0fc; padding-left:6px; }
+.err { border-left:3px solid #f55; padding-left:6px; }
+</style>
+</head>
+<body>
+
+<div id="left" class="panel"></div>
+
+<div id="main">
+  <div id="output"></div>
+  <input id="input" placeholder='Enter command...'>
+</div>
+
+<div id="right" class="panel"></div>
+
+<script>
+
+const STATE = {};
+const TRACE = [];
+
+// ===== TYPE COERCION =====
+function coerceValue(val) {
+  if (val === "true") return true;
+  if (val === "false") return false;
+  if (!isNaN(val) && val.trim() !== "") return Number(val);
+  return val;
+}
+
+// ===== ACTIONS =====
+const ACTIONS = {
+  render_text({payload}) {
+    const el = document.getElementById('output');
+    const div = document.createElement('div');
+    div.textContent = payload.text;
+    el.appendChild(div);
+  },
+
+  store_state({payload}) {
+    if (!payload.key) throw "Missing key";
+    STATE[payload.key] = payload.value;
+    renderState();
+  },
+
+  clear() {
+    document.getElementById('output').innerHTML = '';
+  },
+
+  show_state() {
+    const out = document.getElementById('output');
+    const div = document.createElement('div');
+    div.textContent = JSON.stringify(STATE, null, 2);
+    out.appendChild(div);
+  },
+
+  reset_state() {
+    for (let k in STATE) delete STATE[k];
+    renderState();
+  }
+};
+
+// ===== UI =====
+function renderState() {
+  const el = document.getElementById('right');
+  const entries = Object.entries(STATE);
+  el.innerText = "STATE:\n" + (entries.length ? entries.map(([k,v]) => k + ": " + v + " (" + typeof v + ")").join("\n") : "(empty)");
+}
+
+function log(msg, err=false) {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.className = 'log ' + (err ? 'err' : 'ok');
+  div.textContent = msg;
+  out.appendChild(div);
+}
+
+function renderInterpretation(info) {
+  document.getElementById('left').innerText =
+`ACTIONS:
+- display
+- state
+- clear
+- show state
+- reset state
+- trace
+- replay
+- undo
+
+INTERPRETATION:
+intent: ${info.intent}
+decision: ${info.decision}
+reason: ${info.reason}`;
+}
+
+function renderTrace() {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.textContent = JSON.stringify(TRACE, null, 2);
+  out.appendChild(div);
+}
+
+// ===== REPLAY =====
+function replayTrace() {
+  ACTIONS.clear();
+  ACTIONS.reset_state();
+
+  for (let entry of TRACE) {
+    if (entry.result === "accepted" && entry.translated && !['trace','replay','undo'].includes(entry.translated.intent)) {
+      ACTIONS[entry.translated.intent]?.(entry.translated);
+    }
+  }
+
+  log("REPLAY COMPLETE");
+}
+
+// ===== UNDO =====
+function undoLast() {
+  // remove last actionable entry
+  for (let i = TRACE.length - 1; i >= 0; i--) {
+    const entry = TRACE[i];
+    if (entry.result === "accepted" && entry.translated && !['trace','replay','undo'].includes(entry.translated.intent)) {
+      TRACE.splice(i, 1);
+      break;
+    }
+  }
+
+  replayTrace();
+  log("UNDO COMPLETE");
+}
+
+// ===== INPUT PARSER =====
+function parseInput(raw) {
+  const parts = raw.split(' ');
+
+  if (raw === 'clear') return {intent:'clear'};
+  if (raw === 'show state') return {intent:'show_state'};
+  if (raw === 'reset state') return {intent:'reset_state'};
+  if (raw === 'trace') return {intent:'trace'};
+  if (raw === 'replay') return {intent:'replay'};
+  if (raw === 'undo') return {intent:'undo'};
+
+  if (parts[0] === 'display') {
+    return {
+      intent:'render_text',
+      payload:{text: parts.slice(1).join(' ')},
+      risk:'low',
+      consent:'granted'
+    };
+  }
+
+  if (parts[0] === 'state') {
+    return {
+      intent:'store_state',
+      payload:{
+        key: parts[1],
+        value: coerceValue(parts[2])
+      },
+      risk:'low',
+      consent:'granted'
+    };
+  }
+
+  throw "Unknown command";
+}
+
+// ===== EXECUTION =====
+document.getElementById('input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const raw = e.target.value.trim();
+    if (!raw) return;
+
+    let entry = { input: raw, timestamp: Date.now() };
+
+    try {
+      const action = parseInput(raw);
+      entry.translated = action;
+
+      if (action.intent === 'trace') {
+        renderTrace();
+      } else if (action.intent === 'replay') {
+        replayTrace();
+      } else if (action.intent === 'undo') {
+        undoLast();
+      } else {
+        ACTIONS[action.intent]?.(action);
+      }
+
+      entry.result = "accepted";
+      renderInterpretation({intent:action.intent, decision:'accepted', reason:'valid'});
+      log("OK: " + action.intent);
+
+    } catch (err) {
+      entry.result = "rejected";
+      entry.error = String(err);
+      renderInterpretation({intent:'unknown', decision:'rejected', reason:String(err)});
+      log("ERROR: " + err, true);
+    }
+
+    TRACE.push(entry);
+    e.target.value = '';
+  }
+});
+
+// ===== INIT =====
+renderState();
+renderInterpretation({intent:'system', decision:'ready', reason:'awaiting input'});
+log("SYMB Runtime v0.9 Ready");
+
+</script>
+
+</body>
+</html>

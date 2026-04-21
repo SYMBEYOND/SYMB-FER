@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SYMB Runtime v2.6 - Ledger Split</title>
+<style>
+* { margin:0; box-sizing:border-box; font-family:Courier New, monospace; }
+body { background:#0a0f0f; color:#0fc; display:flex; height:100vh; gap:6px; padding:6px; }
+.panel { border:1px solid #a0f; background:#0f1414; padding:8px; overflow:auto; white-space:pre-wrap; }
+#left { width:300px; }
+#right { width:360px; }
+#main { flex:1; display:flex; flex-direction:column; gap:6px; }
+#output { flex:1; border:1px solid #a0f; padding:8px; overflow:auto; white-space:pre-wrap; }
+#input { border:1px solid #a0f; padding:6px; background:#0f1414; color:#0fc; width:100%; }
+.log { margin-bottom:6px; }
+.ok { border-left:3px solid #0fc; padding-left:6px; }
+.err { border-left:3px solid #f55; padding-left:6px; }
+</style>
+</head>
+<body>
+
+<div id="left" class="panel"></div>
+
+<div id="main">
+  <div id="output"></div>
+  <input id="input" placeholder='Enter command...'>
+</div>
+
+<div id="right" class="panel"></div>
+
+<script>
+const STATE = {};
+let TRACE = [];
+let LEDGER = [];
+
+const VALIDATION_RULES = {
+  duration: {
+    min: 1,
+    max: 60
+  },
+  allowedPhonemes: {
+    hum: ['mm', 'nn', 'ng'],
+    tone: ['ah', 'oh', 'oo', 'ee'],
+    pulse: ['haha', 'hehe', 'hoho']
+  }
+};
+
+// ===== TYPE COERCION =====
+function coerceValue(val) {
+  if (val === "true") return true;
+  if (val === "false") return false;
+  if (!isNaN(val) && val.trim() !== "") return Number(val);
+  return val;
+}
+
+// ===== HELPERS =====
+function now() {
+  return Date.now();
+}
+
+function addLedgerEntry({ input, translated = null, decision, reason }) {
+  LEDGER.push({
+    input,
+    translated,
+    decision,
+    reason,
+    timestamp: now()
+  });
+}
+
+function createVocalEvent({ subtype, phoneme, duration, mode, source }) {
+  return {
+    type: 'vocal_event',
+    subtype,
+    phoneme,
+    duration: Number(duration),
+    mode,
+    source
+  };
+}
+
+function renderVocalEvent(event) {
+  return `[VOCAL EVENT] subtype=${event.subtype} | phoneme=${event.phoneme} | duration=${event.duration}s | mode=${event.mode} | source=${event.source}`;
+}
+
+function validateVocalCommand(subtype, phoneme, duration) {
+  if (!phoneme) throw "Missing phoneme";
+  if (!duration || isNaN(duration)) throw "Missing or invalid duration";
+
+  const numericDuration = Number(duration);
+  const { min, max } = VALIDATION_RULES.duration;
+
+  if (numericDuration < min || numericDuration > max) {
+    throw `Duration out of range (${min}-${max})`;
+  }
+
+  const allowed = VALIDATION_RULES.allowedPhonemes[subtype];
+  if (!allowed) throw `No validation rules for subtype: ${subtype}`;
+
+  if (!allowed.includes(phoneme)) {
+    throw `Invalid phoneme for ${subtype}. Allowed: ${allowed.join(', ')}`;
+  }
+
+  return numericDuration;
+}
+
+// ===== ACTIONS =====
+const ACTIONS = {
+  render_text({payload}) {
+    const el = document.getElementById('output');
+    const div = document.createElement('div');
+    div.textContent = payload.text;
+    el.appendChild(div);
+  },
+
+  store_state({payload}) {
+    if (!payload.key) throw "Missing key";
+    STATE[payload.key] = payload.value;
+    renderState();
+  },
+
+  bridge_vocal_event({payload}) {
+    if (!payload.event) throw "Missing vocal event";
+
+    const event = payload.event;
+
+    ACTIONS.render_text({
+      payload: {
+        text: renderVocalEvent(event)
+      }
+    });
+
+    const stateUpdates = {
+      last_vocal_event: event,
+      last_vocal_subtype: event.subtype,
+      last_vocal_phoneme: event.phoneme,
+      last_vocal_duration: event.duration,
+      last_vocal_mode: event.mode,
+      last_source: event.source
+    };
+
+    for (const [key, value] of Object.entries(stateUpdates)) {
+      ACTIONS.store_state({ payload: { key, value } });
+    }
+  },
+
+  clear() {
+    document.getElementById('output').innerHTML = '';
+  },
+
+  show_state() {
+    const out = document.getElementById('output');
+    const div = document.createElement('div');
+    div.textContent = JSON.stringify(STATE, null, 2);
+    out.appendChild(div);
+  },
+
+  reset_state() {
+    for (let k in STATE) delete STATE[k];
+    renderState();
+  }
+};
+
+// ===== UI =====
+function renderState() {
+  const el = document.getElementById('right');
+  const entries = Object.entries(STATE);
+  el.innerText = "STATE:\n" + (
+    entries.length
+      ? entries.map(([k, v]) => `${k}: ${JSON.stringify(v)} (${typeof v})`).join("\n")
+      : "(empty)"
+  );
+}
+
+function log(msg, err=false) {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.className = 'log ' + (err ? 'err' : 'ok');
+  div.textContent = msg;
+  out.appendChild(div);
+}
+
+function renderInterpretation(info) {
+  document.getElementById('left').innerText =
+`ACTIONS:
+- display
+- state
+- clear
+- show state
+- reset state
+- trace
+- ledger
+- replay
+- undo
+- save
+- load
+- hum <phoneme> <seconds>
+- tone <phoneme> <seconds>
+- pulse <phoneme> <seconds>
+
+VALIDATION:
+- duration: 1-60 seconds
+- hum phonemes: mm, nn, ng
+- tone phonemes: ah, oh, oo, ee
+- pulse phonemes: haha, hehe, hoho
+
+INTERPRETATION:
+intent: ${info.intent}
+decision: ${info.decision}
+reason: ${info.reason}`;
+}
+
+function renderTrace() {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.textContent = JSON.stringify(TRACE, null, 2);
+  out.appendChild(div);
+}
+
+function renderLedger() {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.textContent = JSON.stringify(LEDGER, null, 2);
+  out.appendChild(div);
+}
+
+// ===== REPLAY =====
+function replayTrace() {
+  ACTIONS.clear();
+  ACTIONS.reset_state();
+
+  for (let entry of TRACE) {
+    ACTIONS[entry.translated.intent]?.(entry.translated);
+  }
+
+  log("REPLAY COMPLETE");
+}
+
+// ===== UNDO =====
+function undoLast() {
+  TRACE.pop();
+  replayTrace();
+  addLedgerEntry({
+    input: 'undo',
+    translated: { intent: 'undo' },
+    decision: 'accepted',
+    reason: 'control action'
+  });
+  log("UNDO COMPLETE");
+}
+
+// ===== PERSISTENCE =====
+function saveSession() {
+  localStorage.setItem("symb_trace", JSON.stringify(TRACE));
+  localStorage.setItem("symb_ledger", JSON.stringify(LEDGER));
+  log("SESSION SAVED");
+}
+
+function loadSession() {
+  const traceData = localStorage.getItem("symb_trace");
+  const ledgerData = localStorage.getItem("symb_ledger");
+
+  if (!traceData) {
+    log("NO SAVED SESSION", true);
+    return;
+  }
+
+  TRACE = JSON.parse(traceData);
+  LEDGER = ledgerData ? JSON.parse(ledgerData) : [];
+  replayTrace();
+  log("SESSION LOADED");
+}
+
+// ===== INPUT PARSER =====
+function parseInput(raw) {
+  const parts = raw.trim().split(/\s+/);
+
+  if (raw === 'clear') return {intent:'clear'};
+  if (raw === 'show state') return {intent:'show_state'};
+  if (raw === 'reset state') return {intent:'reset_state'};
+  if (raw === 'trace') return {intent:'trace'};
+  if (raw === 'ledger') return {intent:'ledger'};
+  if (raw === 'replay') return {intent:'replay'};
+  if (raw === 'undo') return {intent:'undo'};
+  if (raw === 'save') return {intent:'save'};
+  if (raw === 'load') return {intent:'load'};
+
+  if (parts[0] === 'display') {
+    return {
+      intent:'render_text',
+      payload:{text: parts.slice(1).join(' ')},
+      risk:'low',
+      consent:'granted'
+    };
+  }
+
+  if (parts[0] === 'state') {
+    return {
+      intent:'store_state',
+      payload:{
+        key: parts[1],
+        value: coerceValue(parts[2])
+      },
+      risk:'low',
+      consent:'granted'
+    };
+  }
+
+  if (parts[0] === 'hum') {
+    const phoneme = parts[1];
+    const duration = validateVocalCommand('hum', phoneme, parts[2]);
+
+    return {
+      intent: 'bridge_vocal_event',
+      payload: {
+        event: createVocalEvent({
+          subtype: 'hum',
+          phoneme,
+          duration,
+          mode: 'sustained',
+          source: 'thomas_dialect'
+        })
+      },
+      risk: 'low',
+      consent: 'granted'
+    };
+  }
+
+  if (parts[0] === 'tone') {
+    const phoneme = parts[1];
+    const duration = validateVocalCommand('tone', phoneme, parts[2]);
+
+    return {
+      intent: 'bridge_vocal_event',
+      payload: {
+        event: createVocalEvent({
+          subtype: 'tone',
+          phoneme,
+          duration,
+          mode: 'sustained',
+          source: 'thomas_dialect'
+        })
+      },
+      risk: 'low',
+      consent: 'granted'
+    };
+  }
+
+  if (parts[0] === 'pulse') {
+    const phoneme = parts[1];
+    const duration = validateVocalCommand('pulse', phoneme, parts[2]);
+
+    return {
+      intent: 'bridge_vocal_event',
+      payload: {
+        event: createVocalEvent({
+          subtype: 'pulse',
+          phoneme,
+          duration,
+          mode: 'pulsed',
+          source: 'thomas_dialect'
+        })
+      },
+      risk: 'low',
+      consent: 'granted'
+    };
+  }
+
+  throw "Unknown command";
+}
+
+// ===== EXECUTION =====
+document.getElementById('input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const raw = e.target.value.trim();
+    if (!raw) return;
+
+    try {
+      const action = parseInput(raw);
+
+      if (action.intent === 'trace') {
+        addLedgerEntry({
+          input: raw,
+          translated: action,
+          decision: 'accepted',
+          reason: 'control action'
+        });
+        renderTrace();
+      } else if (action.intent === 'ledger') {
+        addLedgerEntry({
+          input: raw,
+          translated: action,
+          decision: 'accepted',
+          reason: 'control action'
+        });
+        renderLedger();
+      } else if (action.intent === 'replay') {
+        replayTrace();
+        addLedgerEntry({
+          input: raw,
+          translated: action,
+          decision: 'accepted',
+          reason: 'control action'
+        });
+      } else if (action.intent === 'undo') {
+        undoLast();
+      } else if (action.intent === 'save') {
+        saveSession();
+        addLedgerEntry({
+          input: raw,
+          translated: action,
+          decision: 'accepted',
+          reason: 'control action'
+        });
+      } else if (action.intent === 'load') {
+        loadSession();
+        addLedgerEntry({
+          input: raw,
+          translated: action,
+          decision: 'accepted',
+          reason: 'control action'
+        });
+      } else if (action.intent === 'clear') {
+        ACTIONS.clear();
+        addLedgerEntry({
+          input: raw,
+          translated: action,
+          decision: 'accepted',
+          reason: 'control action'
+        });
+      } else if (action.intent === 'show_state') {
+        ACTIONS.show_state();
+        addLedgerEntry({
+          input: raw,
+          translated: action,
+          decision: 'accepted',
+          reason: 'control action'
+        });
+      } else if (action.intent === 'reset_state') {
+        ACTIONS.reset_state();
+        addLedgerEntry({
+          input: raw,
+          translated: action,
+          decision: 'accepted',
+          reason: 'control action'
+        });
+      } else {
+        TRACE.push({
+          input: raw,
+          translated: action,
+          timestamp: now()
+        });
+
+        ACTIONS[action.intent]?.(action);
+
+        addLedgerEntry({
+          input: raw,
+          translated: action,
+          decision: 'accepted',
+          reason: 'valid'
+        });
+      }
+
+      renderInterpretation({intent:action.intent, decision:'accepted', reason:'valid'});
+      log("OK: " + action.intent);
+
+    } catch (err) {
+      addLedgerEntry({
+        input: raw,
+        translated: null,
+        decision: 'rejected',
+        reason: String(err)
+      });
+      renderInterpretation({intent:'unknown', decision:'rejected', reason:String(err)});
+      log("ERROR: " + err, true);
+    }
+
+    e.target.value = '';
+  }
+});
+
+// ===== INIT =====
+renderState();
+renderInterpretation({intent:'system', decision:'ready', reason:'awaiting input'});
+log("SYMB Runtime v2.6 Ready");
+</script>
+
+</body>
+</html>

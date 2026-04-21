@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SYMB Runtime v1.0</title>
+<style>
+* { margin:0; box-sizing:border-box; font-family:Courier New, monospace; }
+body { background:#0a0f0f; color:#0fc; display:flex; height:100vh; gap:6px; padding:6px; }
+.panel { border:1px solid #a0f; background:#0f1414; padding:8px; overflow:auto; }
+#left { width:260px; }
+#right { width:260px; }
+#main { flex:1; display:flex; flex-direction:column; gap:6px; }
+#output { flex:1; border:1px solid #a0f; padding:8px; overflow:auto; }
+#input { border:1px solid #a0f; padding:6px; background:#0f1414; color:#0fc; width:100%; }
+.log { margin-bottom:6px; }
+.ok { border-left:3px solid #0fc; padding-left:6px; }
+.err { border-left:3px solid #f55; padding-left:6px; }
+</style>
+</head>
+<body>
+
+<div id="left" class="panel"></div>
+
+<div id="main">
+  <div id="output"></div>
+  <input id="input" placeholder='Enter command...'>
+</div>
+
+<div id="right" class="panel"></div>
+
+<script>
+
+const STATE = {};
+let TRACE = [];
+
+// ===== TYPE COERCION =====
+function coerceValue(val) {
+  if (val === "true") return true;
+  if (val === "false") return false;
+  if (!isNaN(val) && val.trim() !== "") return Number(val);
+  return val;
+}
+
+// ===== ACTIONS =====
+const ACTIONS = {
+  render_text({payload}) {
+    const el = document.getElementById('output');
+    const div = document.createElement('div');
+    div.textContent = payload.text;
+    el.appendChild(div);
+  },
+
+  store_state({payload}) {
+    if (!payload.key) throw "Missing key";
+    STATE[payload.key] = payload.value;
+    renderState();
+  },
+
+  clear() {
+    document.getElementById('output').innerHTML = '';
+  },
+
+  show_state() {
+    const out = document.getElementById('output');
+    const div = document.createElement('div');
+    div.textContent = JSON.stringify(STATE, null, 2);
+    out.appendChild(div);
+  },
+
+  reset_state() {
+    for (let k in STATE) delete STATE[k];
+    renderState();
+  }
+};
+
+// ===== UI =====
+function renderState() {
+  const el = document.getElementById('right');
+  const entries = Object.entries(STATE);
+  el.innerText = "STATE:\n" + (entries.length ? entries.map(([k,v]) => k + ": " + v + " (" + typeof v + ")").join("\n") : "(empty)");
+}
+
+function log(msg, err=false) {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.className = 'log ' + (err ? 'err' : 'ok');
+  div.textContent = msg;
+  out.appendChild(div);
+}
+
+function renderInterpretation(info) {
+  document.getElementById('left').innerText =
+`ACTIONS:
+- display
+- state
+- clear
+- show state
+- reset state
+- trace
+- replay
+- undo
+- save
+- load
+
+INTERPRETATION:
+intent: ${info.intent}
+decision: ${info.decision}
+reason: ${info.reason}`;
+}
+
+function renderTrace() {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.textContent = JSON.stringify(TRACE, null, 2);
+  out.appendChild(div);
+}
+
+// ===== REPLAY =====
+function replayTrace() {
+  ACTIONS.clear();
+  ACTIONS.reset_state();
+
+  for (let entry of TRACE) {
+    ACTIONS[entry.translated.intent]?.(entry.translated);
+  }
+
+  log("REPLAY COMPLETE");
+}
+
+// ===== UNDO =====
+function undoLast() {
+  TRACE.pop();
+  replayTrace();
+  log("UNDO COMPLETE");
+}
+
+// ===== PERSISTENCE =====
+function saveSession() {
+  localStorage.setItem("symb_trace", JSON.stringify(TRACE));
+  log("SESSION SAVED");
+}
+
+function loadSession() {
+  const data = localStorage.getItem("symb_trace");
+  if (!data) {
+    log("NO SAVED SESSION", true);
+    return;
+  }
+
+  TRACE = JSON.parse(data);
+  replayTrace();
+  log("SESSION LOADED");
+}
+
+// ===== CANONICAL HELPERS =====
+function makeCanonicalAction({
+  intent,
+  payload = {},
+  risk = 'low',
+  consent = 'granted',
+  source = 'unknown',
+  raw = '',
+  adapter = 'unknown'
+}) {
+  return {
+    intent,
+    payload,
+    risk,
+    consent,
+    meta: {
+      source,
+      raw,
+      adapter,
+      timestamp: Date.now()
+    }
+  };
+}
+
+function fromShorthand(raw) {
+  const parts = raw.split(' ');
+
+  if (raw === 'clear') return { intent: 'clear' };
+  if (raw === 'show state') return { intent: 'show_state' };
+  if (raw === 'reset state') return { intent: 'reset_state' };
+  if (raw === 'trace') return { intent: 'trace' };
+  if (raw === 'replay') return { intent: 'replay' };
+  if (raw === 'undo') return { intent: 'undo' };
+  if (raw === 'save') return { intent: 'save' };
+  if (raw === 'load') return { intent: 'load' };
+
+  if (parts[0] === 'display') {
+    return makeCanonicalAction({
+      intent: 'render_text',
+      payload: { text: parts.slice(1).join(' ') },
+      source: 'shorthand',
+      raw,
+      adapter: 'fromShorthand'
+    });
+  }
+
+  if (parts[0] === 'state') {
+    return makeCanonicalAction({
+      intent: 'store_state',
+      payload: {
+        key: parts[1],
+        value: coerceValue(parts.slice(2).join(' '))
+      },
+      source: 'shorthand',
+      raw,
+      adapter: 'fromShorthand'
+    });
+  }
+
+  throw 'Unknown shorthand command';
+}
+
+function fromSYMB(obj, raw) {
+  if (obj.intent === 'render' && typeof obj.text === 'string') {
+    return makeCanonicalAction({
+      intent: 'render_text',
+      payload: { text: obj.text },
+      risk: obj.risk || 'low',
+      consent: obj.consent || 'granted',
+      source: 'symb',
+      raw,
+      adapter: 'fromSYMB'
+    });
+  }
+
+  if (obj.intent === 'remember' && typeof obj.key === 'string') {
+    return makeCanonicalAction({
+      intent: 'store_state',
+      payload: {
+        key: obj.key,
+        value: obj.value
+      },
+      risk: obj.risk || 'low',
+      consent: obj.consent || 'granted',
+      source: 'symb',
+      raw,
+      adapter: 'fromSYMB'
+    });
+  }
+
+  throw 'Unknown SYMB form';
+}
+
+function fromSYMB2(obj, raw) {
+  if (obj.act === 'render_text' && typeof obj.args?.text === 'string') {
+    return makeCanonicalAction({
+      intent: 'render_text',
+      payload: { text: obj.args.text },
+      risk: obj.policy?.risk || 'low',
+      consent: obj.policy?.consent || 'granted',
+      source: 'symb2',
+      raw,
+      adapter: 'fromSYMB2'
+    });
+  }
+
+  if (obj.act === 'store_state' && typeof obj.args?.key === 'string') {
+    return makeCanonicalAction({
+      intent: 'store_state',
+      payload: {
+        key: obj.args.key,
+        value: obj.args.value
+      },
+      risk: obj.policy?.risk || 'low',
+      consent: obj.policy?.consent || 'granted',
+      source: 'symb2',
+      raw,
+      adapter: 'fromSYMB2'
+    });
+  }
+
+  throw 'Unknown SYMB2 form';
+}
+
+// ===== INPUT PARSER =====
+function parseInput(raw) {
+  if (!raw.startsWith('{')) {
+    return fromShorthand(raw);
+  }
+
+  let obj;
+  try {
+    obj = JSON.parse(raw);
+  } catch {
+    throw 'Invalid JSON';
+  }
+
+  if (typeof obj.intent === 'string') {
+    return fromSYMB(obj, raw);
+  }
+
+  if (typeof obj.act === 'string') {
+    return fromSYMB2(obj, raw);
+  }
+
+  throw 'Unknown JSON bridge form';
+}
+
+// ===== EXECUTION =====
+document.getElementById('input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const raw = e.target.value.trim();
+    if (!raw) return;
+
+    try {
+      const action = parseInput(raw);
+
+      if (action.intent === 'trace') {
+        renderTrace();
+      } else if (action.intent === 'replay') {
+        replayTrace();
+      } else if (action.intent === 'undo') {
+        undoLast();
+      } else if (action.intent === 'save') {
+        saveSession();
+      } else if (action.intent === 'load') {
+        loadSession();
+      } else if (action.intent === 'clear') {
+        ACTIONS.clear();
+      } else if (action.intent === 'show_state') {
+        ACTIONS.show_state();
+      } else if (action.intent === 'reset_state') {
+        ACTIONS.reset_state();
+      } else {
+        TRACE.push({
+          input: raw,
+          translated: action,
+          timestamp: action.meta?.timestamp || Date.now()
+        });
+
+        ACTIONS[action.intent]?.(action);
+      }
+
+      renderInterpretation({intent:action.intent, decision:'accepted', reason:'valid'});
+      log("OK: " + action.intent);
+
+    } catch (err) {
+      renderInterpretation({intent:'unknown', decision:'rejected', reason:String(err)});
+      log("ERROR: " + err, true);
+    }
+
+    e.target.value = '';
+  }
+});
+
+// ===== INIT =====
+renderState();
+renderInterpretation({intent:'system', decision:'ready', reason:'awaiting input'});
+log("SYMB Runtime v1.0 Ready");
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SYMB Runtime v0.3 Bridge</title>
+<style>
+* { margin:0; box-sizing:border-box; font-family:Courier New, monospace; }
+body {
+  background:#0a0f0f;
+  color:#0fc;
+  display:flex;
+  height:100vh;
+  gap:6px;
+  padding:6px;
+}
+.panel {
+  border:1px solid #a0f;
+  background:#0f1414;
+  padding:8px;
+  overflow:auto;
+}
+#left { width:320px; white-space:pre-wrap; }
+#right { width:260px; white-space:pre-wrap; }
+#main {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+#output {
+  flex:1;
+  border:1px solid #a0f;
+  padding:8px;
+  overflow:auto;
+}
+#input {
+  border:1px solid #a0f;
+  padding:6px;
+  background:#0f1414;
+  color:#0fc;
+  width:100%;
+}
+.log { margin-bottom:6px; }
+.ok { border-left:3px solid #0fc; padding-left:6px; }
+.err { border-left:3px solid #f55; padding-left:6px; }
+.button {
+  background:#0a0f0f;
+  color:#0fc;
+  border:1px solid #a0f;
+  padding:6px;
+  cursor:pointer;
+}
+.grid {
+  display:grid;
+  gap:6px;
+  grid-template-columns:repeat(auto-fit,minmax(80px,1fr));
+}
+</style>
+</head>
+<body>
+<div id="left" class="panel"></div>
+<div id="main">
+  <div id="output"></div>
+  <input id="input" placeholder='Enter JSON action or SYMB-shaped declaration...'>
+</div>
+<div id="right" class="panel"></div>
+<script>
+const STATE = {};
+
+const ACTIONS = {
+  render_text({target, payload}) {
+    const el = getTarget(target);
+    const div = document.createElement('div');
+    div.textContent = payload.text;
+    el.appendChild(div);
+  },
+
+  render_html({target, payload}) {
+    const el = getTarget(target);
+    const div = document.createElement('div');
+    div.innerHTML = payload.html;
+    el.appendChild(div);
+  },
+
+  make_button({target, payload}) {
+    const el = getTarget(target);
+    const btn = document.createElement('button');
+    btn.className = 'button';
+    btn.textContent = payload.label || 'Click';
+    btn.onclick = () => log(`Button clicked: ${payload.label || 'Click'}`);
+    el.appendChild(btn);
+  },
+
+  make_grid({target, payload}) {
+    const el = getTarget(target);
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+
+    (payload.items || []).forEach(item => {
+      const d = document.createElement('div');
+      d.textContent = item;
+      d.className = 'panel';
+      grid.appendChild(d);
+    });
+
+    el.appendChild(grid);
+  },
+
+  store_state({payload}) {
+    if (!payload.key) throw new Error('Missing key');
+    STATE[payload.key] = payload.value;
+    renderState();
+  }
+};
+
+function getTarget(t) {
+  if (t === 'main') return document.getElementById('output');
+  if (t === 'left') return document.getElementById('left');
+  if (t === 'right') return document.getElementById('right');
+  throw new Error('Invalid target');
+}
+
+function log(msg, isError=false) {
+  const out = document.getElementById('output');
+  const div = document.createElement('div');
+  div.className = 'log ' + (isError ? 'err' : 'ok');
+  div.textContent = msg;
+  out.appendChild(div);
+  out.scrollTop = out.scrollHeight;
+}
+
+function renderState() {
+  const el = document.getElementById('right');
+  const entries = Object.entries(STATE);
+
+  if (entries.length === 0) {
+    el.innerText = 'STATE:\n(empty)';
+    return;
+  }
+
+  el.innerText = 'STATE:\n' + entries.map(([k,v]) => `${k}: ${String(v)}`).join('\n');
+}
+
+function validate(action) {
+  if (!action.intent) throw new Error('Missing intent');
+  if (!ACTIONS[action.intent]) throw new Error('Unknown intent');
+
+  if (!action.target && action.intent !== 'store_state') {
+    throw new Error('Missing target');
+  }
+
+  if (!action.payload) throw new Error('Missing payload');
+
+  if (action.risk && action.risk !== 'low') {
+    throw new Error('Blocked: risk too high');
+  }
+
+  if (action.consent !== 'granted') {
+    throw new Error('Consent not granted');
+  }
+}
+
+function execute(action) {
+  validate(action);
+  ACTIONS[action.intent](action);
+}
+
+function isBridgeDeclaration(input) {
+  return Object.prototype.hasOwnProperty.call(input, 'type');
+}
+
+function translateBridgeDeclaration(input) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    throw new Error('Bridge input must be a JSON object');
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(input, 'type')) {
+    throw new Error('Missing type');
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(input, 'consent')) {
+    throw new Error('Missing consent');
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(input, 'risk')) {
+    throw new Error('Missing risk');
+  }
+
+  if (input.consent !== 'granted') {
+    throw new Error('Consent not granted');
+  }
+
+  if (input.risk !== 'low') {
+    throw new Error('Blocked: risk too high');
+  }
+
+  if (input.type === 'display') {
+    if (!Object.prototype.hasOwnProperty.call(input, 'content')) {
+      throw new Error('Missing content');
+    }
+    if (typeof input.content !== 'string') {
+      throw new Error('Content must be a string');
+    }
+    if (!input.content.trim()) {
+      throw new Error('Content cannot be empty');
+    }
+
+    return {
+      action: {
+        intent: 'render_text',
+        target: 'main',
+        payload: { text: input.content },
+        risk: input.risk,
+        consent: input.consent
+      },
+      bridgeInfo: {
+        source_type: 'display',
+        source_meaning: 'show message',
+        translated_intent: 'render_text',
+        category: 'symb bridge',
+        decision: 'accepted',
+        reason: 'valid display declaration mapped to runtime action'
+      }
+    };
+  }
+
+  if (input.type === 'state') {
+    if (!Object.prototype.hasOwnProperty.call(input, 'key')) {
+      throw new Error('Missing key');
+    }
+    if (typeof input.key !== 'string') {
+      throw new Error('Key must be a string');
+    }
+    if (!input.key.trim()) {
+      throw new Error('Key cannot be empty');
+    }
+    if (!Object.prototype.hasOwnProperty.call(input, 'value')) {
+      throw new Error('Missing value');
+    }
+    const valueType = typeof input.value;
+    if (input.value !== null && (valueType === 'object' || Array.isArray(input.value))) {
+      throw new Error('Value must be string, number, or boolean in v0.3');
+    }
+
+    return {
+      action: {
+        intent: 'store_state',
+        payload: { key: input.key, value: input.value },
+        risk: input.risk,
+        consent: input.consent
+      },
+      bridgeInfo: {
+        source_type: 'state',
+        source_meaning: 'store key/value',
+        translated_intent: 'store_state',
+        category: 'symb bridge',
+        decision: 'accepted',
+        reason: 'valid state declaration mapped to runtime action'
+      }
+    };
+  }
+
+  throw new Error('Unsupported type');
+}
+
+function renderInterpretation(info) {
+  const left = document.getElementById('left');
+  left.innerText =
+`ACTIONS:
+- render_text
+- render_html
+- make_button
+- make_grid
+- store_state
+
+BRIDGE TYPES:
+- display
+- state
+
+INTERPRETATION:
+source_type: ${info.source_type}
+source_meaning: ${info.source_meaning}
+translated_intent: ${info.translated_intent}
+category: ${info.category}
+decision: ${info.decision}
+reason: ${info.reason}`;
+}
+
+function explainRuntimeAcceptance(action) {
+  const categoryMap = {
+    render_text: 'ui render',
+    render_html: 'ui render',
+    make_button: 'ui construction',
+    make_grid: 'ui construction',
+    store_state: 'state mutation'
+  };
+
+  return {
+    source_type: 'runtime',
+    source_meaning: 'direct runtime action',
+    translated_intent: action.intent,
+    category: categoryMap[action.intent] || 'runtime',
+    decision: 'accepted',
+    reason: 'valid runtime action executed directly'
+  };
+}
+
+function explainRejection(rawInput, err) {
+  let sourceType = 'unknown';
+  let sourceMeaning = 'unknown';
+
+  if (rawInput && typeof rawInput === 'object' && !Array.isArray(rawInput)) {
+    if (rawInput.type === 'display') sourceMeaning = 'show message';
+    if (rawInput.type === 'state') sourceMeaning = 'store key/value';
+    if (Object.prototype.hasOwnProperty.call(rawInput, 'type')) {
+      sourceType = String(rawInput.type);
+    } else if (Object.prototype.hasOwnProperty.call(rawInput, 'intent')) {
+      sourceType = 'runtime';
+      sourceMeaning = 'direct runtime action';
+    }
+  }
+
+  return {
+    source_type: sourceType,
+    source_meaning: sourceMeaning,
+    translated_intent: 'none',
+    category: 'symb bridge',
+    decision: 'rejected',
+    reason: String(err.message || err)
+  };
+}
+
+document.getElementById('input').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+
+  const raw = e.target.value.trim();
+  if (!raw) return;
+
+  let parsed = null;
+
+  try {
+    parsed = JSON.parse(raw);
+
+    if (isBridgeDeclaration(parsed)) {
+      const { action, bridgeInfo } = translateBridgeDeclaration(parsed);
+      execute(action);
+      log(`OK: bridge ${parsed.type} -> ${action.intent}`);
+      renderInterpretation(bridgeInfo);
+    } else {
+      execute(parsed);
+      log('OK: ' + parsed.intent);
+      renderInterpretation(explainRuntimeAcceptance(parsed));
+    }
+  } catch (err) {
+    log('ERROR: ' + (err.message || err), true);
+    renderInterpretation(explainRejection(parsed, err));
+  }
+
+  e.target.value = '';
+});
+
+renderState();
+renderInterpretation({
+  source_type: 'none',
+  source_meaning: 'system ready',
+  translated_intent: 'none',
+  category: 'symb bridge',
+  decision: 'ready',
+  reason: 'awaiting JSON action or SYMB-shaped declaration'
+});
+log('SYMB Runtime v0.3 Bridge Ready');
+</script>
+</body>
+</html>
