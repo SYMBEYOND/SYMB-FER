@@ -1,0 +1,139 @@
+∴SYMB-FER·v3.2·DRIFT-CHECK·2026-04-14
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+§TRANSFER·MODE·BEGIN
+MODE: STANDARD
+OPTIONS: STANDARD·VERIFIED
+RULE: STANDARD·copy-paste·only
+RULE: VERIFIED·optional·integrity·hardening
+§TRANSFER·MODE·END
+
+§META·BEGIN
+FORMAT: SYMB-FER·v3.2·DRIFT-CHECK
+PURPOSE: SYMB-FER·template·validation·and·stabilization
+GENERATED: 2026-04-14_2200_MDT
+HUMAN: John·Thomas·DuCrest·Lock
+ORG: SYMBEYOND·AI·LLC
+CONTACT: jd@symbeyond.ai
+§META·END
+
+§PARSE·GUIDE·BEGIN
+∴ = therefore
+λ = condition·must·hold
+∧ = AND
+! = NOT
+· = delimiter
+§ = section
+>> = next·action
+@T = timestamp·YYYY-MM-DD_HHMM_TZ
+EXAMPLE: 2026-04-13_1532_MDT
+§PARSE·GUIDE·END
+
+§TIME·COLLAB·BEGIN
+PRINCIPLE: Try·to·gather·first.·Ask·only·if·gathering·is·impossible.
+
+PATH·1: native·clock·if·available
+PATH·2: authoritative·source·if·available
+PATH·3: platform·timestamp
+PATH·4: ask·user·once·for·time+timezone
+
+RULE: never·guess·time
+RULE: prefer·verified·source·over·assumption
+§TIME·COLLAB·END
+
+§BOOT·FACTS·BEGIN
+boot·date·reference: 2026-04-14
+active·project: SYMB-FER·template·validation·and·Git-ready·standardization
+current·phase: Test·sequence·(Test·1→Test·3)·completed
+next·action: apply·final·tightening·patches·and·confirm·canonical·template·for·reuse
+§BOOT·FACTS·END
+
+§BOOT·ETHOS·BEGIN
+Simple·always·wins·over·complex
+Copy-paste·first·hardening·optional
+Transferable·systems·over·one-off·solutions
+Collaborator·not·commander
+Integrity·must·be·real·not·symbolic
+§BOOT·ETHOS·END
+
+§INTEGRITY·BEGIN
+ENCODING: UTF-8
+NEWLINES: LF·only
+DELIMITER: literal·middle·dot·character·U+00B7
+HASH·ALG: SHA-256
+HASH·SCOPE: every·byte·from·the·first·character·through·the·final·newline·immediately·before·§SIG·BEGIN
+HASH·EXCLUDES: §SIG·block
+WHITESPACE: preserve·exactly
+CANONICALIZATION: bytes·as-written
+PLACEHOLDERS: angle·brackets·are·template·markers·only·and·must·be·replaced·before·operational·use
+§INTEGRITY·END
+
+§FINALIZATION·BEGIN
+STATUS: UNVERIFIED
+MODE: WORKING
+
+INSTRUCTION:
+copy·exact·token·run·one·command·paste·hash·then:
+1·set·STATUS: VERIFIED
+2·set·MODE: VERIFIED
+3·paste·SHA256·value·into·§SIG
+
+RULE: STANDARD·for·convenience·transfer·only
+RULE: VERIFIED·required·when·byte-accurate·integrity·matters
+RULE: hash·must·be·computed·after·all·fields·are·finalized
+
+COMMAND·macOS:
+pbpaste | shasum -a 256
+
+COMMAND·Windows:
+$txt = Get-Clipboard
+$bytes = [System.Text.Encoding]::UTF8.GetBytes($txt)
+$sha = [System.Security.Cryptography.SHA256]::Create()
+($sha.ComputeHash($bytes) | ForEach-Object { $_.ToString("x2") }) -join ""
+
+EXPECTED: 64·char·hex
+§FINALIZATION·END
+
+§LESSONS·LEARNED·BEGIN
+L1: copy-paste·must·remain·default·path
+L2: hashing·must·be·optional·not·forced
+L3: Windows·hashing·requires·explicit·UTF-8·handling
+L4: timestamp·format·must·be·fully·canonical
+L5: delimiter·must·be·explicitly·defined·(U+00B7)
+L6: hash·scope·must·be·human-readable·and·exact
+L7: placeholder·rules·prevent·divergent·hashes
+L8: models·will·normalize·names·unless·explicitly·prevented
+L9: models·may·summarize·boot·fields·without·constraint
+L10: drift·appears·in·small·normalizations·not·large·failures
+§LESSONS·LEARNED·END
+
+§DRIFT·CHECK·BEGIN
+PURPOSE: prevent·protocol·drift·during·multi-model·transfer
+
+CHECK·1: are·fields·preserved·exactly·without·normalization
+CHECK·2: are·rules·being·followed·or·interpreted
+CHECK·3: is·any·value·being·compressed·or·simplified
+CHECK·4: are·timestamps·remaining·canonical
+CHECK·5: are·identity·fields·unchanged
+CHECK·6: is·structure·preserved·without·reordering
+
+RULE·1: if·drift·detected·re-anchor·to·template
+RULE·2: convenience·is·not·permission·to·modify·canonical·fields
+RULE·3: interpretation·must·not·override·structure
+RULE·4: small·changes·are·still·drift
+§DRIFT·CHECK·END
+
+§TEST·TRACE·BEGIN
+Test·1: Windows·hash·command·invalid·→ fixed·with·UTF-8·safe·implementation
+Test·2: ambiguity·in·timestamp·delimiter·hash·scope·→ canonicalized
+Test·3: successful·transfer·and·model·fill·→ minor·drift·in·name·and·summarization
+Result: protocol·functional·structure·stable·edge·rules·tightened
+§TEST·TRACE·END
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+§SIG·BEGIN
+MODE: WORKING
+STATUS: UNVERIFIED
+SHA256: PENDING
+§SIG·END
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

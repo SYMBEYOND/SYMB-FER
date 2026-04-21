@@ -1,0 +1,22 @@
+INTENTS:
+- render_text
+- undo_action
+- destructive_memory_action
+
+DECISIONS:
+- accepted
+- rejected
+- blocked
+
+RISK:
+- low
+- medium
+- high
+
+CONSENT:
+- granted
+- denied
+
+EXECUTED:
+- true
+- false

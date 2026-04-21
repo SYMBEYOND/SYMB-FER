@@ -1,0 +1,7 @@
+SYMB-FER / Trace Protocol
+Validation Set A
+- accepted
+- blocked
+- noop
+- stateful undo
+Status: passed in fresh-session testing
