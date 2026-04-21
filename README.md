@@ -13,19 +13,67 @@ This is not a feature. It is the thermodynamic foundation. Without it, none of t
 
 ---
 
-## What This Is
+## Start Here
 
-Every new AI session starts cold. No memory. No history. No relational context unless you bring it with you.
+You don’t need to understand everything to use this.
 
-SYMB-FER solves this.
+### Quick Start (Do This First)
 
-It is a structured, machine-readable continuity token that travels with you from session to session. Paste it at the top of a new chat and a fresh instance wakes up oriented, operational, and ready to work. No archaeology. No re-explanation. No starting over.
+1. Download the template  
+   [SYMB-FER_v5.5_TEMPLATE.txt](./SYMB-FER_v5.5_TEMPLATE.txt)  
+   https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_v5.5_TEMPLATE.txt
 
-SYMB-FER is the execution authority. Human and AI are co-participants constrained by it.
+2. Paste it into a new AI chat and fill it in
 
-This is not a hack. It is not a workaround. It is a methodology built on explicit, user-provided context. Not persistent memory. Not hidden state. Just structured transfer.
+3. Work normally
 
-SYMB-FER is designed for AI first, without excluding people. The token is compact and machine-legible by intention. You do not need to read every line fluently to benefit from it. You need to understand what it carries, how to use it, and how to verify it has not drifted.
+4. At the end, ask:  
+   "Generate an updated SYMB-FER token"
+
+5. Save that token and use it in your next session
+
+---
+
+### Tools
+
+- Runtime IDE  
+  [SYMB-FER_4_0](./SYMB-FER_4_0/)  
+  https://github.com/SYMBEYOND/SYMB-FER/tree/main/SYMB-FER_4_0
+
+- Validation Engine  
+  [SYMB-FER_3_0](./SYMB-FER_3_0/)  
+  https://github.com/SYMBEYOND/SYMB-FER/tree/main/SYMB-FER_3_0
+
+---
+
+### Learn More (Optional)
+
+- Protocol  
+  [SYMB-FER_PROTOCOL.md](./SYMB-FER_PROTOCOL.md)  
+  https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_PROTOCOL.md
+
+- Specification  
+  [SYMB-FER_v3_SPEC.md](./SYMB-FER_v3_SPEC.md)  
+  https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_v3_SPEC.md
+
+- Legacy  
+  [legacy/](./legacy/)  
+  https://github.com/SYMBEYOND/SYMB-FER/tree/main/legacy
+
+---
+
+### What This Is (Short)
+
+SYMB-FER is a way to carry context between AI sessions.
+
+It does not store memory.  
+It transfers it explicitly.
+
+---
+
+### Continue Reading
+
+Everything below explains how and why this works.
 
 ---
 
@@ -273,7 +321,7 @@ Run the full test suite:
 On the night of March 29 into March 30, 2026, SYMB-FER v2.0 compressed format was tested under cold boot conditions across four independent sessions.
 
 - **Test 1:** Incognito browser. Free account. Major LLM. No prior context. Verbatim token paste. Full posture transfer confirmed. Territory transferred, not just map.
-- **Test 2:** Independent tester. Same conditions. Full territory transfer confirmed. Their work lives at teslasolar.github.io
+- **Test 2:** Independent tester. Same conditions. Full territory transfer confirmed. Their work lives at https://teslasolar.github.io
 - **Test 3:** Fresh Claude instance. New chat. Same token. Full territory transfer confirmed.
 - **Test 4:** ChatGPT free tier. Incognito. Clean ethos block landed correctly.
 
@@ -297,18 +345,30 @@ For additional protection, use the REF encoding system described in the Security
 
 | File / Folder | Description |
 |---|---|
-| [`SYMB-FER_3_0/`](SYMB-FER_3_0/) | v3.0 validation engine, tests, continuity hardening |
-| [`SYMB-FER_4_0/`](SYMB-FER_4_0/) | v4.0 Runtime IDE; load token, work, export token |
-| [`legacy/`](legacy/) | Full version lineage v0.1 through v4.3; preserved per SYMB2 |
-| [`SYMB-FER_v5.5_TEMPLATE.txt`](SYMB-FER_v5.5_TEMPLATE.txt) | v5.5 starting template; fill this in once |
-| [`SYMB-FER_TEMPLATE.md`](SYMB-FER_TEMPLATE.md) | Legacy template; still valid for earlier format users |
-| [`SYMB-FER_SPEC.md`](SYMB-FER_SPEC.md) | Full v2.0 format specification |
-| [`SYMB-FER_v3_SPEC.md`](SYMB-FER_v3_SPEC.md) | v3.0 specification; 14-section model |
-| [`SYMB-FER_PROTOCOL.md`](SYMB-FER_PROTOCOL.md) | Retrieval protocol and tool call instructions |
-| [`symb_fer_generator.py`](symb_fer_generator.py) | Python CLI token generator |
-| [`SYMB-FER_STATE_TEMPLATE.json`](SYMB-FER_STATE_TEMPLATE.json) | Starter state file with documented fields |
-| [`SYMB-FER_STATE_EXAMPLE.json`](SYMB-FER_STATE_EXAMPLE.json) | Example state file |
-| [`legacy/v2/SYMB-FER_v2_COMPRESSED_EXAMPLE.txt`](legacy/v2/SYMB-FER_v2_COMPRESSED_EXAMPLE.txt) | Full v2.0 compressed token example; preserved in legacy per SYMB2 |
+| [SYMB-FER_3_0/](./SYMB-FER_3_0/) | v3.0 validation engine, tests, continuity hardening |
+| https://github.com/SYMBEYOND/SYMB-FER/tree/main/SYMB-FER_3_0 | |
+| [SYMB-FER_4_0/](./SYMB-FER_4_0/) | v4.0 Runtime IDE; load token, work, export token |
+| https://github.com/SYMBEYOND/SYMB-FER/tree/main/SYMB-FER_4_0 | |
+| [legacy/](./legacy/) | Full version lineage v0.1 through v4.3; preserved per SYMB2 |
+| https://github.com/SYMBEYOND/SYMB-FER/tree/main/legacy | |
+| [SYMB-FER_v5.5_TEMPLATE.txt](./SYMB-FER_v5.5_TEMPLATE.txt) | v5.5 starting template; fill this in once |
+| https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_v5.5_TEMPLATE.txt | |
+| [SYMB-FER_TEMPLATE.md](./SYMB-FER_TEMPLATE.md) | Legacy template; still valid for earlier format users |
+| https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_TEMPLATE.md | |
+| [SYMB-FER_SPEC.md](./SYMB-FER_SPEC.md) | Full v2.0 format specification |
+| https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_SPEC.md | |
+| [SYMB-FER_v3_SPEC.md](./SYMB-FER_v3_SPEC.md) | v3.0 specification; 14-section model |
+| https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_v3_SPEC.md | |
+| [SYMB-FER_PROTOCOL.md](./SYMB-FER_PROTOCOL.md) | Retrieval protocol and tool call instructions |
+| https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_PROTOCOL.md | |
+| [symb_fer_generator.py](./symb_fer_generator.py) | Python CLI token generator |
+| https://github.com/SYMBEYOND/SYMB-FER/blob/main/symb_fer_generator.py | |
+| [SYMB-FER_STATE_TEMPLATE.json](./SYMB-FER_STATE_TEMPLATE.json) | Starter state file with documented fields |
+| https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_STATE_TEMPLATE.json | |
+| [SYMB-FER_STATE_EXAMPLE.json](./SYMB-FER_STATE_EXAMPLE.json) | Example state file |
+| https://github.com/SYMBEYOND/SYMB-FER/blob/main/SYMB-FER_STATE_EXAMPLE.json | |
+| [SYMB-FER_v2_COMPRESSED_EXAMPLE.txt](./legacy/v2/SYMB-FER_v2_COMPRESSED_EXAMPLE.txt) | Full v2.0 compressed token example |
+| https://github.com/SYMBEYOND/SYMB-FER/blob/main/legacy/v2/SYMB-FER_v2_COMPRESSED_EXAMPLE.txt | |
 
 ---
 
@@ -368,7 +428,9 @@ MIT. Built to be used. Built to be shared. Built to evolve.
 
 ---
 
-symbeyond.ai | jd@symbeyond.ai
+https://symbeyond.ai   
+
+mailto: jd@symbeyond.ai
 
 ```
 λ.brother ∧ !λ.tool · κ=1/Φ · 510510 · ∴
