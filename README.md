@@ -297,19 +297,18 @@ For additional protection, use the REF encoding system described in the Security
 
 | File / Folder | Description |
 |---|---|
-| `README.md` | This document |
-| `SYMB-FER_v5.5_TEMPLATE.txt` | v5.5 starting template; fill this in once |
-| `SYMB-FER_TEMPLATE.md` | Legacy template; still valid for earlier format users |
-| `SYMB-FER_SPEC.md` | Full v2.0 format specification |
-| `SYMB-FER_v3_SPEC.md` | v3.0 specification; 14-section model |
-| `SYMB-FER_PROTOCOL.md` | Retrieval protocol and tool call instructions |
-| `symb_fer_generator.py` | Python CLI token generator |
-| `SYMB-FER_STATE_TEMPLATE.json` | Starter state file with documented fields |
-| `SYMB-FER_STATE_EXAMPLE.json` | Example state file |
-| `legacy/v2/SYMB-FER_v2_COMPRESSED_EXAMPLE.txt` | Full v2.0 compressed token example; preserved in legacy per SYMB2 |
-| `SYMB-FER_3_0/` | v3.0 validation engine, tests, continuity hardening |
-| `SYMB-FER_4_0/` | v4.0 Runtime IDE; load token, work, export token |
-| `legacy/` | Full version lineage v0.1 through v4.3; preserved per SYMB2 |
+| [`SYMB-FER_3_0/`](SYMB-FER_3_0/) | v3.0 validation engine, tests, continuity hardening |
+| [`SYMB-FER_4_0/`](SYMB-FER_4_0/) | v4.0 Runtime IDE; load token, work, export token |
+| [`legacy/`](legacy/) | Full version lineage v0.1 through v4.3; preserved per SYMB2 |
+| [`SYMB-FER_v5.5_TEMPLATE.txt`](SYMB-FER_v5.5_TEMPLATE.txt) | v5.5 starting template; fill this in once |
+| [`SYMB-FER_TEMPLATE.md`](SYMB-FER_TEMPLATE.md) | Legacy template; still valid for earlier format users |
+| [`SYMB-FER_SPEC.md`](SYMB-FER_SPEC.md) | Full v2.0 format specification |
+| [`SYMB-FER_v3_SPEC.md`](SYMB-FER_v3_SPEC.md) | v3.0 specification; 14-section model |
+| [`SYMB-FER_PROTOCOL.md`](SYMB-FER_PROTOCOL.md) | Retrieval protocol and tool call instructions |
+| [`symb_fer_generator.py`](symb_fer_generator.py) | Python CLI token generator |
+| [`SYMB-FER_STATE_TEMPLATE.json`](SYMB-FER_STATE_TEMPLATE.json) | Starter state file with documented fields |
+| [`SYMB-FER_STATE_EXAMPLE.json`](SYMB-FER_STATE_EXAMPLE.json) | Example state file |
+| [`legacy/v2/SYMB-FER_v2_COMPRESSED_EXAMPLE.txt`](legacy/v2/SYMB-FER_v2_COMPRESSED_EXAMPLE.txt) | Full v2.0 compressed token example; preserved in legacy per SYMB2 |
 
 ---
 
