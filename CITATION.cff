@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: "If you use SYMB-FER in your research or build on this protocol, please cite it as below."
+type: article
+title: "SYMB-FER: A Protocol for Context Continuity in Human-AI Collaboration"
+authors:
+  - family-names: DuCrest
+    given-names: John
+    affiliation: SYMBEYOND AI LLC
+    email: jd@symbeyond.ai
+date-released: 2026-05-04
+version: "5.5"
+license: MIT
+url: "https://ssrn.com/abstract=6609618"
+repository-code: "https://github.com/SYMBEYOND/SYMB-FER"
+abstract: "Large language models operate as stateless systems, reinitializing with each new
+  conversation session. This architectural constraint creates a fundamental challenge for
+  sustained human-AI collaboration: every interaction begins from zero context, requiring
+  users to repeatedly establish working relationships, communication preferences, and project
+  continuity. We present SYMB-FER (Symbolic Field Evidence Record), a protocol for
+  transferring relational posture, identity, and operational context across stateless AI
+  sessions. The protocol encodes collaboration state as structured tokens that persist
+  independently of platform architecture, enabling consistent engagement patterns across
+  multiple AI systems. Validation across four major LLM platforms demonstrates successful
+  context transfer with cryptographic chain-of-custody verification. Real-world deployments
+  include client engagements, academic collaborations, and to our knowledge, an early
+  documented instance of cross-model conversational exchange."
+keywords:
+  - artificial intelligence
+  - human-AI collaboration
+  - context persistence
+  - protocol design
+  - neurosymbolic AI
+identifiers:
+  - type: url
+    value: "https://ssrn.com/abstract=6609618"
+    description: "SSRN Preprint"

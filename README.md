@@ -4,6 +4,14 @@
 
 ---
 
+## Published Research
+
+> **SYMB-FER: A Protocol for Context Continuity in Human-AI Collaboration**  
+> John DuCrest · SYMBEYOND AI LLC · Posted May 4, 2026  
+> [https://ssrn.com/abstract=6609618](https://ssrn.com/abstract=6609618)
+
+---
+
 ## The Condition Everything Runs On
 
 ```
