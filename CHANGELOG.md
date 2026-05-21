@@ -6,6 +6,27 @@ Version lineage preserved per SYMB2 doctrine: nothing is discarded without inten
 
 ---
 
+## [6.0] - 2026-05-18 - Search Protocol and Closed Milestones
+
+### Added
+- `§SEARCH·PROTOCOL` section: operational instructions for when and how to search conversation history, including closure signal detection and query guidance; positioned after `§BOOT·PROTOCOL`
+- `§CLOSED·MILESTONES` section: permanent record of confirmed irreversible completions, distinct from `§RESOLVED`; once a milestone is confirmed closed it never returns to ACTIVE or QUEUED
+- Closure signal vocabulary formalized: standard phrases that indicate a thread has completed (delivered, paid, posted, confirmed, etc.)
+- Search trigger vocabulary formalized: phrases that require search before responding (past-reference phrasing, status questions, correction signals, named uncertainty)
+
+### Changed
+- `§BOOT·PROTOCOL` now explicitly includes REFER trigger and timestamp calibration as named subsections
+- Two-track distinction (token vs IDE) clarified with explicit rule: IDE serves the token, never the reverse
+- Lane structure formalized with PRIMARY/QUEUED distinction and six-question scoring key
+- `§LESSONS·LEARNED` expanded with canonical lessons L-A through L-J
+
+### Architecture
+- v6.0 merges the best of v5.5 (REF encoding, ReFer protocol, REFER trigger, SYMB notation, resolved archive) with production-tested prioritization structure (scoring key, lane structure, session log)
+- `§CURRENT·REALITY` is the only section replaced each session; `§SESSION·LOG` is never replaced -- distinction now explicit in both sections
+- Public sanitized template maintained; personal data remains in private instance tokens
+
+---
+
 ## [5.5] - 2026-04-21 - Token Track Formally Separated
 
 ### Added
