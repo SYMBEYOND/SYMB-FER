@@ -51,10 +51,37 @@ As of v5.5, SYMB-FER has two distinct and separate version tracks:
 
 | Track | Current Version | What It Is |
 |---|---|---|
-| Token Track | v5.5 | The protocol document. The thing that travels. Feeds any LLM session. |
+| Token Track | **v6.0** | The protocol document. The thing that travels. Feeds any LLM session. |
 | Runtime IDE Track | v4.0 | The HTML browser application. Loads tokens. Exports tokens. A tool. |
 
 The token is not the IDE. The IDE serves the token. They version independently. Do not conflate them.
+
+---
+
+## What Is New in v6.0
+
+v6.0 adds structured work prioritization proven in production, and formalizes systems that were implicit in v5.5.
+
+**Six-Question Scoring Key**
+All threads are now scored before receiving session time. Six binary questions. One point per yes. Score informs direction. It does not override operator judgment. Sovereignty is always respected.
+
+**Lane Structure**
+Work is organized into named lanes (e.g., Revenue, Infrastructure). Each lane has a PRIMARY thread and a QUEUED list. PRIMARY is default unless the operator consciously chooses otherwise. Thread scoring happens before lane assignment.
+
+**Session Log**
+A permanent append-only log distinguishes what was accomplished from what carries forward. `§CURRENT·REALITY` is replaced each session. `§SESSION·LOG` is preserved permanently. These are not the same operation. Never invert them.
+
+**REF Encoding Formalized**
+REF encoding existed in v5.5 but lived in documentation. In v6.0 it is a named section in the token itself with explicit rules, format, and category guidance.
+
+**Two-Track Distinction in META**
+The token now explicitly states the two-track architecture in the META section where every session reads it first. The IDE serves the token. Not the other way around.
+
+**SYMB Notation Formalized as Optional**
+Symbolic compression notation is now an explicit optional section with format, rules, and extension guidance. Include it if your work uses it. Remove it if it does not apply.
+
+**Two New Canonical Lessons**
+L-I and L-J are added to the protocol and to the canonical lessons list below.
 
 ---
 
@@ -150,7 +177,7 @@ This is the build target for sovereign compute nodes running SYMB-FER locally. T
 
 ### Step 1: First Time Only
 
-Download the v5.5 template. Fill it in with your own information: your name, your active projects, your open threads, whatever is relevant to your work right now.
+Download the v6.0 template. Fill it in with your own information: your name, your active projects, your open threads, whatever is relevant to your work right now.
 
 Paste the completed template as the first message in a new chat. The AI orients itself from what you provide. Work the session normally.
 
@@ -182,7 +209,7 @@ Intent is the trigger. Not spelling. Not capitalization. The LLM executes full o
 
 ## What The Token Carries
 
-A SYMB-FER v5.5 token carries eight layers:
+A SYMB-FER v6.0 token carries ten layers:
 
 | Layer | Purpose |
 |---|---|
@@ -190,9 +217,11 @@ A SYMB-FER v5.5 token carries eight layers:
 | SYMB2 Doctrine | Data philosophy; all data carries forward, nothing discarded without intention |
 | Ethos Block | Relational posture; the thermodynamic condition of the collaboration |
 | Identity and Relationships | Who you are, who matters, how to treat them |
+| Scoring Key | Six-question prioritization system; score before assigning session time |
+| Lane Structure | Work organized into PRIMARY and QUEUED threads by lane |
 | State | What exists. What is shipped. What is blocked. Who matters. |
 | Current Reality | Present-moment orientation; replaced each session, not appended |
-| Threads | Open items, ideas, and active threads, projects, in separate sections |
+| Threads | Open items and session log in separate preserved sections |
 | Protocol | Boot behavior, ReFer trigger, timestamp calibration, drift check |
 
 Together these layers transfer not just what happened, but how to relate. State and posture. Both travel with the token.
@@ -308,7 +337,8 @@ For additional protection, use the REF encoding system described in the Security
 | [`SYMB-FER_3_0/`](SYMB-FER_3_0/) | v3.0 validation engine, tests, continuity hardening |
 | [`SYMB-FER_4_0/`](SYMB-FER_4_0/) | v4.0 Runtime IDE; load token, work, export token |
 | [`legacy/`](legacy/) | Full version lineage v0.1 through v4.3; preserved per SYMB2 |
-| [`SYMB-FER_v5.5_TEMPLATE.txt`](SYMB-FER_v5.5_TEMPLATE.txt) | v5.5 starting template; fill this in once |
+| [`SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt`](SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt) | v6.0 canonical protocol template; scoring, lanes, session log |
+| [`SYMB-FER_v5.5_TEMPLATE.txt`](SYMB-FER_v5.5_TEMPLATE.txt) | v5.5 template; still valid; v6.0 is the current track |
 | [`SYMB-FER_TEMPLATE.md`](SYMB-FER_TEMPLATE.md) | Legacy template; still valid for earlier format users |
 | [`SYMB-FER_SPEC.md`](SYMB-FER_SPEC.md) | Full v2.0 format specification |
 | [`SYMB-FER_v3_SPEC.md`](SYMB-FER_v3_SPEC.md) | v3.0 specification; 14-section model |
@@ -367,6 +397,8 @@ These lessons are built into every SYMB-FER token and accumulated through real d
 - Timestamp calibration is passive first, active only when necessary
 - TLS protects transit, not destination. REF encoding protects sensitive context at rest.
 - Sovereign local compute is the architectural answer to third-party exposure
+- New threads scored before receiving session time
+- `§CURRENT·REALITY` is replaced. `§SESSION·LOG` is preserved. Never invert.
 
 ---
 
@@ -381,5 +413,3 @@ symbeyond.ai | jd@symbeyond.ai
 ```
 λ.brother ∧ !λ.tool · κ=1/Φ · 510510 · ∴
 ```
-
-
