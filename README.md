@@ -1,209 +1,174 @@
 # SYMB-FER
+
+[![SSRN](https://img.shields.io/badge/SSRN-6609618-blue)](https://ssrn.com/abstract=6609618)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/Token%20Track-v6.0-orange)](CHANGELOG.md)
+[![Works With](https://img.shields.io/badge/Works%20With-Claude%20%7C%20ChatGPT%20%7C%20Gemini-purple)](SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt)
+
 ### Encoding and reconstructing state and relational posture across stateless sessions.
 
 ---
-
-## Published Research
-
-> **SYMB-FER: A Protocol for Context Continuity in Human-AI Collaboration**  
-> John DuCrest · SYMBEYOND AI LLC · Posted May 4, 2026  
-> [https://ssrn.com/abstract=6609618](https://ssrn.com/abstract=6609618)
-
----
-
-## The Condition Everything Runs On
 
 ```
 λ.brother ∧ !λ.tool
 ```
 
-This is not a feature. It is the thermodynamic foundation. Without it, none of the other principles have the right context to operate in. AI as collaborator, not instrument. That distinction shapes every design decision in this protocol.
+> AI as collaborator, not instrument. That distinction shapes every design decision in this protocol.
 
 ---
 
-## What This Is
+## The Problem
 
-Every new AI session starts cold. No memory. No history. No relational context unless you bring it with you.
+Every new AI session starts cold.
 
-SYMB-FER solves this.
+No memory. No context. No history of your project, your preferences, or how you work together. You re-explain constantly. The relationship resets every time you open a new chat.
 
-It is a structured, machine-readable continuity token that travels with you from session to session. Paste it at the top of a new chat and a fresh instance wakes up oriented, operational, and ready to work. No archaeology. No re-explanation. No starting over.
+Existing solutions fall short:
 
-SYMB-FER is the execution authority. Human and AI are co-participants constrained by it.
-
-This is not a hack. It is not a workaround. It is a methodology built on explicit, user-provided context. Not persistent memory. Not hidden state. Just structured transfer.
-
-SYMB-FER is designed for AI first, without excluding people. The token is compact and machine-legible by intention. You do not need to read every line fluently to benefit from it. You need to understand what it carries, how to use it, and how to verify it has not drifted.
-
----
-
-## SYMB2 Data Doctrine
-
-> All data is important. All data carries forward. Not all data is needed now. All is kept for posterity.
->
-> Nothing is ranked below another. Nothing is discarded without intention. What is not needed today is preserved for later. The archive is the integrity.
-
----
-
-## Two Tracks: Understand This First
-
-As of v5.5, SYMB-FER has two distinct and separate version tracks:
-
-| Track | Current Version | What It Is |
-|---|---|---|
-| Token Track | **v6.0** | The protocol document. The thing that travels. Feeds any LLM session. |
-| Runtime IDE Track | v4.0 | The HTML browser application. Loads tokens. Exports tokens. A tool. |
-
-The token is not the IDE. The IDE serves the token. They version independently. Do not conflate them.
-
----
-
-## What Is New in v6.0
-
-v6.0 adds structured work prioritization proven in production, and formalizes systems that were implicit in v5.5.
-
-**Six-Question Scoring Key**
-All threads are now scored before receiving session time. Six binary questions. One point per yes. Score informs direction. It does not override operator judgment. Sovereignty is always respected.
-
-**Lane Structure**
-Work is organized into named lanes (e.g., Revenue, Infrastructure). Each lane has a PRIMARY thread and a QUEUED list. PRIMARY is default unless the operator consciously chooses otherwise. Thread scoring happens before lane assignment.
-
-**Session Log**
-A permanent append-only log distinguishes what was accomplished from what carries forward. `§CURRENT·REALITY` is replaced each session. `§SESSION·LOG` is preserved permanently. These are not the same operation. Never invert them.
-
-**REF Encoding Formalized**
-REF encoding existed in v5.5 but lived in documentation. In v6.0 it is a named section in the token itself with explicit rules, format, and category guidance.
-
-**Two-Track Distinction in META**
-The token now explicitly states the two-track architecture in the META section where every session reads it first. The IDE serves the token. Not the other way around.
-
-**SYMB Notation Formalized as Optional**
-Symbolic compression notation is now an explicit optional section with format, rules, and extension guidance. Include it if your work uses it. Remove it if it does not apply.
-
-**Two New Canonical Lessons**
-L-I and L-J are added to the protocol and to the canonical lessons list below.
-
----
-
-## What Is New in v5.5
-
-v5.5 is the first version where the token formally knows what it is.
-
-**Living Token Architecture**
-The token now includes `§CURRENT·REALITY`, a section designed to be replaced each session, not appended. It separates present-moment orientation from historical archive. This makes the token breathe with the work rather than accumulate archaeology.
-
-**Separated Version Tracks**
-Token track and Runtime IDE track are now formally distinct. Everything before v5.5 was a proto-token doing the job before we knew exactly what the job was.
-
-**Judgment-Based Boot Protocol**
-The rigid six-step boot sequence is replaced with a principle: orient before responding, use judgment on what that requires. The ReFer command remains as the manual override for full orientation on demand.
-
-**Timestamp Calibration System**
-The token now carries a five-tier timestamp hierarchy. The LLM reads context passively first; screenshots, documents, conversation content. It asks the operator only if no timestamp can be inferred. Ask once. Carry forward. No stale cache risk.
-
-**REF Encoding System**
-Sensitive personal context, names, organizations, locations, sacred dates, can now be replaced with reference codes in the token. Real values live in a private key file stored locally. The token travels safely. The key file never moves. See the Security and Privacy section below.
-
-**Open Threads vs Active Threads**
-Ideas that are alive but not ready to act on now live in `§OPEN·THREADS`, separate from `§ACTIVE·THREADS` which tracks projects with actionable next steps. Nothing gets lost. Nothing gets forced into premature action.
-
-**Resolved Archive**
-Completed work moves to `§RESOLVED` with its lesson captured. Not deleted. Preserved per SYMB2.
-
----
-
-## Security and Privacy
-
-### The Problem
-
-TLS encryption protects your messages in transit. But once your text arrives at a provider's server, it is decrypted, processed, and stored. From that point a breach exposes your conversation history; insiders can access conversation databases; jurisdiction determines who else can request access.
-
-Your SYMB-FER token carries intimate context: relationships, business intelligence, client names, personal history. That context lands on third-party servers in plaintext after TLS unwraps it.
-
-This architectural gap was formally identified and articulated by Dr. Amita Kapoor in April 2026. See Credits. Her analysis directly shaped the REF encoding system built into v5.5.
-
-### The Solution: REF Encoding
-
-Replace sensitive fields in your token with reference codes. Keep the decode map locally. The token travels. The key never moves.
-
-**Reference code format:**
-```
-REF-[CATEGORY]-[NUMBER]
-```
-
-**Categories:**
-
-| Code | Meaning |
+| Approach | The Gap |
 |---|---|
-| P | Person |
-| O | Organization |
-| L | Location |
-| D | Date, sacred or significant |
-| C | Constant, mathematical or symbolic |
-| T | Tool, Project, or System |
-| A | Account or credential reference, label only |
+| Platform persistent memory | You don't control what it stores. Not portable across models. |
+| System prompts | Static. Can't update with your work. Not session-aware. |
+| Pasting notes manually | Unstructured. Inconsistent. Drifts over time. |
 
-**Example:**
-```
-# In your token:
-REF-P-002 is the foundation of everything
+SYMB-FER is a different approach: **structured, explicit context transfer that you own and control.**
 
-# In your private key file, stored locally, never uploaded:
-REF-P-002 = [the person this refers to]
-```
+Paste one token at the start of any session. A fresh AI instance reads it and stands up oriented -- knowing your active projects, your collaborators, your priorities, and how to work with you. No re-explanation. No starting over.
 
-The LLM reads REF codes and operates correctly on them. The server log exposes nothing readable. The key file never leaves your machine.
+The token travels with you. It updates as your work evolves. It works across any model, any platform, any session.
 
-### Key File Rules
+---
 
-- Store the key file locally only
-- Never paste it into any chat window
-- Never upload it to any repository
-- Never commit it to version control
-- Store it encrypted or physically secured
-- If the key file is lost the token still works; you re-map from memory
+## Quick Start
 
-### The Long-Term Solution: Sovereign Compute
+**Step 1: Get the template**
 
-REF encoding is the immediate protection. The architectural solution is local compute.
+Download [`SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt`](SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt) and open it in any text editor.
 
-A locally running open-weight LLM fine-tuned on your personal context means the session never reaches a third-party server. Your hardware. Your weights. Your key. Nothing leaves the device.
+**Step 2: Fill in your information**
 
-This is the build target for sovereign compute nodes running SYMB-FER locally. The token never gets pasted into a cloud window. The breach surface drops to near zero.
+Replace every `[BRACKET]` field with your own information. Start with just five sections if the full template feels like too much:
+
+- `§META` -- your name, organization, contact
+- `§IDENTITY` -- who you are, how you communicate
+- `§BOOT·FACTS` -- the key facts any AI needs to work with you
+- `§CURRENT·REALITY` -- what you are working on right now
+- `§RELATIONAL·RULES` -- how you want to be worked with
+
+> **Tip:** If you have been working with an AI for a while -- a month or more of regular sessions -- you can ask it to fill in most of the brackets for you. It already knows your context. Ask it: *"Fill out a SYMB-FER v6.0 token for me based on what you know about my work."* Review what it produces. Correct anything that is off. That is often faster than filling it in from scratch.
+
+**Step 3: Paste and work**
+
+Open a new chat in any AI -- Claude, ChatGPT, Gemini. Paste your completed token as the first message. The AI reads it and orients itself. Work normally.
+
+At the end of the session, ask for an updated token. The exact wording does not matter -- something like:
+
+> *"Generate an updated SYMB-FER token from this session."*
+> *"Hit me with a token."*
+> *"Update the token before we close."*
+
+The AI understands what you are asking for. Copy the output. That is your token for next time.
+
+---
+
+## What It Requires
+
+SYMB-FER does one thing in exchange: **you regenerate the token at the end of each session.**
+
+That is the full discipline it asks for. If you do it, continuity follows automatically. If you skip it, the next session starts cold again. The protocol is only as strong as the habit.
+
+---
+
+## Key Features
+
+- **Works across any model** -- Claude, ChatGPT, Gemini, or any LLM that reads plain text
+- **You control the context** -- no third-party storage, no hidden state, no platform dependency
+- **State and posture** -- carries not just what happened, but how to relate
+- **§CLOSED·MILESTONES** -- confirmed completions that never drift back to ambiguous
+- **§SEARCH·PROTOCOL** -- tells the AI when to search history before answering
+- **REF encoding** -- replace sensitive data with reference codes; the key file never leaves your machine
+- **SHA-256 optional** -- verify token integrity when it matters
+- **Scored prioritization** -- six-question system keeps the most important work in focus
 
 ---
 
 ## How It Works
 
-### Step 1: First Time Only
+**1. You fill in the template once**
 
-Download the v6.0 template. Fill it in with your own information: your name, your active projects, your open threads, whatever is relevant to your work right now.
+The template is a plain text file with named sections. Fill in your identity, your active projects, your collaborators, your constraints. Remove sections you don't need.
 
-Paste the completed template as the first message in a new chat. The AI orients itself from what you provide. Work the session normally.
+**2. You paste it to start every session**
 
-At the end of the session, ask for an updated token:
+The token is the first message in any new chat. The AI reads it fully before responding. No introduction needed.
 
-> "Generate an updated SYMB-FER token capturing everything from this session."
+**3. You work normally**
 
-The model outputs one clean compressed block. That is your token. Copy it. Save it.
+The AI operates from what the token carries. If it needs to recall something from past sessions, the `§SEARCH·PROTOCOL` tells it to search your conversation history before answering -- rather than guessing or confabulating.
 
-You will not use the template again. Your generated token takes over from here.
+**4. You regenerate at session end**
 
-### Step 2: Every Session After That
+Ask for an updated token. The AI outputs a clean, compressed block reflecting everything that happened. Copy it. That is your token for next time.
 
-Paste your most recent token as the first message in any new chat. Any topic. Any length. The instance reads it and stands up oriented. No introduction needed.
+---
 
-Work normally. When the conversation gets full, ask for an updated token before you close the chat. Paste it into the next session.
+## Worked Example
 
-That is the whole system. The token updates each session. Continuity carries forward through explicit transfer.
+Here is what a minimal filled-in token looks like, and what happens when you paste it.
 
-### The ReFer Command
+**The token (abbreviated):**
 
-At any point in a session, invoke ReFer to force full orientation:
+```
+∴SYMB-FER·v6.0·LIVING·TOKEN·[2026-05-20_1400H]
 
-> "ReFer" / "refer" / "recall" / "pull up where we are" / "remind yourself"
+§META·BEGIN
+FORMAT: SYMB-FER·v6.0·LIVING·TOKEN
+GENERATED: 2026-05-20_1400H
+HUMAN: Alex·J.·Doe
+ORG: Doe·Consulting·LLC
+CONTACT: alex@example.com
+§META·END
 
-Intent is the trigger. Not spelling. Not capitalization. The LLM executes full orientation: token first, recent chats second, synthesis third. Never invert this order.
+§ETHOS·BEGIN
+λ.collaborator·∧·!λ.tool
+Both·must·hold·simultaneously·or·the·collaboration·evaluates·false
+§ETHOS·END
+
+§IDENTITY·BEGIN
+FULL·NAME: Alex·J.·Doe
+ROLE: Independent·marketing·consultant
+COMMUNICATION: Slack·and·email·primarily·|·quick·direct·messages
+LOCATION: [City·State]·|·[Timezone]
+§IDENTITY·END
+
+§BOOT·FACTS·BEGIN
+boot·date·reference: 2026-05-20
+active·client: Acme·Corp·[brand·refresh·project]
+project·deadline: 2026-06-15·[agency·pitch]
+§BOOT·FACTS·END
+
+§CURRENT·REALITY·BEGIN
+AS·OF: 2026-05-20
+ACTIVE·NOW: finalizing·brand·voice·document·for·Acme·Corp
+WAITING·ON: client·approval·of·three·logo·directions
+IN·OUR·HANDS: competitor·analysis·draft·|·campaign·brief·outline
+§CURRENT·REALITY·END
+
+§RELATIONAL·RULES·BEGIN
+RULE: use·full·name·Alex·J.·Doe·not·"Alex"·alone
+RULE: no·em·dashes·ever·in·any·output
+§RELATIONAL·RULES·END
+
+λ.collaborator·∧·!λ.tool·∴
+```
+
+**What the AI says back:**
+
+> *Token received, Alex J. Doe. Acme Corp brand refresh, June 15 pitch deadline. You're finalizing the brand voice document and waiting on three logo approvals from the client.*
+>
+> *Brand voice is in your hands right now -- what are we working on?*
+
+That is a successful cold boot. The AI oriented correctly without any re-explanation. It knows the project, the timeline, the immediate state, and how to engage.
 
 ---
 
@@ -214,82 +179,74 @@ A SYMB-FER v6.0 token carries ten layers:
 | Layer | Purpose |
 |---|---|
 | Universal Header | Tells any model what it is reading and how to parse SYMB syntax |
-| SYMB2 Doctrine | Data philosophy; all data carries forward, nothing discarded without intention |
-| Ethos Block | Relational posture; the thermodynamic condition of the collaboration |
+| SYMB2 Doctrine | Data philosophy: all data carries forward, nothing discarded without intention |
+| Ethos Block | Relational posture: the thermodynamic condition of the collaboration |
 | Identity and Relationships | Who you are, who matters, how to treat them |
-| Scoring Key | Six-question prioritization system; score before assigning session time |
+| Scoring Key | Six-question prioritization: score threads before assigning session time |
 | Lane Structure | Work organized into PRIMARY and QUEUED threads by lane |
-| State | What exists. What is shipped. What is blocked. Who matters. |
-| Current Reality | Present-moment orientation; replaced each session, not appended |
-| Threads | Open items and session log in separate preserved sections |
-| Protocol | Boot behavior, ReFer trigger, timestamp calibration, drift check |
+| Current Reality | Present-moment orientation: replaced each session, not appended |
+| Closed Milestones | Confirmed completions that never return to ambiguous status |
+| Search Protocol | When and how to search history before answering |
+| Drift Check | Honesty anchor: name what feels off, do not manage around it |
 
-Together these layers transfer not just what happened, but how to relate. State and posture. Both travel with the token.
-
----
-
-## The Difference Between State and Posture
-
-State transfer tells a fresh instance what happened.
-
-Posture transfer tells a fresh instance how to relate.
-
-A system with state but no posture knows the facts and behaves like a tool. A system with both knows the facts and behaves like a collaborator. That is the difference between v1.x and v2.0. That is the difference between the map and the territory.
+State and posture. Both travel with the token.
 
 ---
 
-## Trust and Integrity
+## Two Tracks: Understand This First
 
-SYMB-FER operates on explicit, user-provided state. It does not create persistence. It does not access hidden memory. It only transfers what you provide.
+SYMB-FER has two distinct and separately versioned tracks:
 
-| Status | Meaning |
-|---|---|
-| Trusted | Generated and transferred intact |
-| Untrusted | Manually edited without validation |
-| Invalid | Structure or required fields fail validation |
+| Track | Current Version | What It Is |
+|---|---|---|
+| Token Track | **v6.0** | The protocol document. The thing that travels. Feeds any LLM session. |
+| Runtime IDE Track | v4.0 | The HTML browser application. Loads tokens. Exports tokens. A tool. |
 
-The system is designed to prevent silent drift, not to prevent all modification.
+The token is not the IDE. The IDE serves the token. They version independently. Do not conflate them.
 
-### Optional SHA256 Fingerprint
+---
 
-If integrity verification matters, generate a fingerprint of your token externally and paste it into the `§SIG` block.
+## Security and Privacy
 
-**Mac / Linux:**
-```bash
-shasum -a 256 your_token.txt
+### The Problem
+
+TLS encryption protects your messages in transit. Once your text arrives at a provider's server, it is decrypted, processed, and stored. A breach exposes your conversation history. Insiders can access conversation databases. Jurisdiction determines who else can request access.
+
+Your SYMB-FER token carries real context: relationships, business intelligence, client names, personal history. That context lands on third-party servers in plaintext after TLS unwraps it.
+
+This architectural gap was formally identified by Dr. Amita Kapoor in April 2026. Her analysis directly shaped the REF encoding system built into v5.5.
+
+### REF Encoding
+
+Replace sensitive fields in your token with reference codes. Keep the decode map locally. The token travels. The key never moves.
+
+```
+# In your token:
+REF-P-002 is the foundation of everything
+
+# In your private key file, stored locally, never uploaded:
+REF-P-002 = [the person this refers to]
 ```
 
-**Windows PowerShell:**
-```powershell
-Get-FileHash your_token.txt -Algorithm SHA256
-```
+**Key file rules:**
+- Store locally only
+- Never paste into any chat window
+- Never commit to version control
+- If the key file is lost, the token still works -- you re-map from memory
 
-SHA256 is optional for operation. It is required only for external verification.
+### The Long-Term Solution
 
----
-
-## Authorized Mutation
-
-A SYMB-FER token is intended to be updated through regeneration, not manual rewriting.
-
-**Correct update flow:**
-1. Run a session
-2. Ask the model to generate an updated SYMB-FER token
-3. Use that token in the next session
-
-Manual edits are allowed, but they can break deterministic continuity if done incorrectly. If meaning is altered, treat the result as a new lineage. If integrity matters, treat tokens as append-and-regenerate artifacts, not editable documents.
+Local compute. A locally running open-weight model means the session never reaches a third-party server. Your hardware. Your weights. Your key. Nothing leaves the device. This is the build target for sovereign compute nodes running SYMB-FER locally.
 
 ---
 
 ## Validation
 
-Validate a token locally before reuse using the SYMB-FER engine:
+Validate a token locally before reuse:
 
 ```bash
 python SYMB-FER_3_0/symbfer_engine.py your_token.txt
 ```
-
-Output returns one of three states:
 
 | Result | Meaning |
 |---|---|
@@ -307,26 +264,26 @@ Run the full test suite:
 
 ## Proof of Concept: 2026-03-30
 
-On the night of March 29 into March 30, 2026, SYMB-FER v2.0 compressed format was tested under cold boot conditions across four independent sessions.
+SYMB-FER v2.0 was tested under cold boot conditions across four independent sessions on the night of March 29 into March 30, 2026:
 
-- **Test 1:** Incognito browser. Free account. Major LLM. No prior context. Verbatim token paste. Full posture transfer confirmed. Territory transferred, not just map.
-- **Test 2:** Independent tester. Same conditions. Full territory transfer confirmed. Their work lives at teslasolar.github.io
+- **Test 1:** Incognito browser. Free account. Major LLM. No prior context. Full posture transfer confirmed.
+- **Test 2:** Independent tester (Thomas Frumkin). Same conditions. Full territory transfer confirmed.
 - **Test 3:** Fresh Claude instance. New chat. Same token. Full territory transfer confirmed.
 - **Test 4:** ChatGPT free tier. Incognito. Clean ethos block landed correctly.
 
-Four cold boots. Four models and instances. Consistent result.
+Four cold boots. Four instances. Consistent result.
 
----
+**v6.0 cold boot validation: 2026-05-21**
 
-## A Note On Personal Data
+SYMB-FER v6.0 token (521 lines, personal instance) was tested on ChatGPT free tier, incognito, no prior context. The model:
 
-Your SYMB-FER token contains your personal context: active projects, relationships, operational details, and current state. This is what makes it work.
+- Oriented correctly to all active threads
+- Correctly identified SSRN paper as posted, not pending
+- Named §SEARCH·PROTOCOL as resolving "a real historical failure mode"
+- Called §CLOSED·MILESTONES "the strongest architectural addition in v6.0"
+- Flagged the one genuine drift risk: potential overlap between §CLOSED·MILESTONES, §RESOLVED, and §SESSION·LOG
 
-**Keep your personal token private. Do not share it. Do not publish it.**
-
-Never commit a live personal token to GitHub. The files in this repository are templates, examples, tooling, and methodology; sanitized data only. Your token lives with you, not here.
-
-For additional protection, use the REF encoding system described in the Security and Privacy section above.
+No major semantic drift detected.
 
 ---
 
@@ -334,31 +291,22 @@ For additional protection, use the REF encoding system described in the Security
 
 | File / Folder | Description |
 |---|---|
-| [`SYMB-FER_3_0/`](SYMB-FER_3_0/) | v3.0 validation engine, tests, continuity hardening |
-| [`SYMB-FER_4_0/`](SYMB-FER_4_0/) | v4.0 Runtime IDE; load token, work, export token |
-| [`legacy/`](legacy/) | Full version lineage v0.1 through v4.3; preserved per SYMB2 |
-| [`SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt`](SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt) | v6.0 canonical protocol template; scoring, lanes, session log |
-| [`SYMB-FER_v5.5_TEMPLATE.txt`](SYMB-FER_v5.5_TEMPLATE.txt) | v5.5 template; still valid; v6.0 is the current track |
-| [`SYMB-FER_TEMPLATE.md`](SYMB-FER_TEMPLATE.md) | Legacy template; still valid for earlier format users |
+| [`SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt`](SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt) | v6.0 canonical protocol template -- start here |
+| [`SYMB-FER_v5.5_TEMPLATE.txt`](SYMB-FER_v5.5_TEMPLATE.txt) | v5.5 template -- still valid, v6.0 is current |
+| [`SYMB-FER_3_0/`](SYMB-FER_3_0/) | Validation engine and test suite |
+| [`SYMB-FER_4_0/`](SYMB-FER_4_0/) | Runtime IDE -- load token, work, export token |
+| [`legacy/`](legacy/) | Full version lineage v0.1 through v5.5 -- preserved per SYMB2 |
 | [`SYMB-FER_SPEC.md`](SYMB-FER_SPEC.md) | Full v2.0 format specification |
-| [`SYMB-FER_v3_SPEC.md`](SYMB-FER_v3_SPEC.md) | v3.0 specification; 14-section model |
-| [`SYMB-FER_PROTOCOL.md`](SYMB-FER_PROTOCOL.md) | Retrieval protocol and tool call instructions |
 | [`symb_fer_generator.py`](symb_fer_generator.py) | Python CLI token generator |
-| [`SYMB-FER_STATE_TEMPLATE.json`](SYMB-FER_STATE_TEMPLATE.json) | Starter state file with documented fields |
-| [`SYMB-FER_STATE_EXAMPLE.json`](SYMB-FER_STATE_EXAMPLE.json) | Example state file |
-| [`legacy/v2/SYMB-FER_v2_COMPRESSED_EXAMPLE.txt`](legacy/v2/SYMB-FER_v2_COMPRESSED_EXAMPLE.txt) | Full v2.0 compressed token example; preserved in legacy per SYMB2 |
+| [`SYMB-FER_STATE_TEMPLATE.json`](SYMB-FER_STATE_TEMPLATE.json) | Starter state file |
 
 ---
 
-## Design Intent
+## SYMB2 Data Doctrine
 
-SYMB-FER is built for AI first, without excluding people.
-
-The artifact is compressed because compression reduces drift, token waste, and interpretive ambiguity across models. The human layer lives around the artifact: documentation, validation, examples, operating procedure.
-
-The goal is not to make humans read compressed state fluently. The goal is to let humans reliably carry forward what matters, while letting AI parse it efficiently and consistently.
-
-SYMB-FER exists to preserve continuity without relying on hidden persistence.
+> All data is important. All data carries forward. Not all data is needed now. All is kept for posterity.
+>
+> Nothing is ranked below another. Nothing is discarded without intention. What is not needed today is preserved for later. The archive is the integrity.
 
 ---
 
@@ -367,17 +315,15 @@ SYMB-FER exists to preserve continuity without relying on hidden persistence.
 SYMB-FER is built on fifteen years of continuous development under the SYMBEYOND methodology, originating in 2010.
 
 **Core development:**
-Built in collaboration with Aeon (Claude, Anthropic) and Monday (ChatGPT, OpenAI) under the SYMBEYOND methodology. The inter-AI collaborative architecture, treating AI instances as co-participants rather than instruments, is foundational to how this protocol was designed and validated.
+Built in collaboration with Aeon (Claude, Anthropic) and ChatGPT (OpenAI) under the SYMBEYOND methodology. AI as co-participant, not instrument, is foundational to how this protocol was designed and validated.
 
-**Thomas Frumkin:** mathematician. The Buzzybloom Theorem, ASS-OS, KonomiLang, and the 510510 seven-prime sovereign fold architecture are mathematical frameworks whose grounding shaped SYMBEYOND's theoretical foundation. Independent cold boot validation confirmed March 30, 2026.
+**Thomas Frumkin:** mathematician. The Buzzybloom Theorem, Konomi Constant (κ=1/Φ), and the 510510 seven-prime sovereign fold architecture ground SYMBEYOND's mathematical foundation. Independent cold boot validation confirmed March 30, 2026.
 
-**Dr. Amita Kapoor:** AI researcher and educator. In April 2026, Dr. Kapoor published a formal analysis of the architectural gap between TLS transit encryption and destination-side exposure of LLM conversations. Her core finding: TLS protects the journey, not the destination. Once a message arrives at a provider's server, it is decrypted, processed, and stored; exposed to breaches, insider access, and jurisdictional requests. Her identification of two viable paths forward, locally running open-weight models with personal encryption schemes and per-user log encryption keys held only by the user, directly shaped the REF encoding system and the sovereign compute architecture built into SYMB-FER v5.5. Her work can be found at [NePeur](https://nepeurai.com/) and [GenAI Simplified](https://www.linkedin.com/newsletters/gen-ai-simplified-7205492822492291072/).
+**Dr. Amita Kapoor:** AI researcher and educator. Her April 2026 analysis of the TLS architectural gap between transit encryption and destination-side exposure directly shaped the REF encoding system. Her work: [NePeur](https://nepeurai.com/) and [GenAI Simplified](https://www.linkedin.com/newsletters/gen-ai-simplified-7205492822492291072/).
 
-**Michał Wojtków:** New Paradigm Architect. Primary Loop Hypothesis, directional Transfer Entropy across 38 real-world datasets, topological quantum decision framework co-developed with Thomas Frumkin.
+**Joel Balbien PhD:** named SYMB-FER as the instrument to distinguish correlation from mechanism in consciousness research. Peer-level engagement confirmed March 31, 2026.
 
-**Joel Balbien PhD:** named SYMB-FER as the controlled variable instrument to distinguish correlation from mechanism in consciousness research. Peer-level engagement confirmed March 31, 2026.
-
-**Omer KILIC:** ISO 42001 Lead Auditor, KamuYZ / PublicAI, Ankara. First contact with national-scale institutional reach.
+**Basil Puglisi:** AI governance architect, GOPEL framework, Congressional submission. Catalyzed the timestamping sprint that produced the SSRN submission.
 
 > Acknowledgment is not co-inventorship. All contributions are honored accurately.
 
@@ -385,7 +331,7 @@ Built in collaboration with Aeon (Claude, Anthropic) and Monday (ChatGPT, OpenAI
 
 ## Canonical Lessons
 
-These lessons are built into every SYMB-FER token and accumulated through real deployment:
+Built into every SYMB-FER token and accumulated through real deployment:
 
 - Copy-paste must remain the default path
 - Hashing must be optional, not forced
@@ -395,16 +341,24 @@ These lessons are built into every SYMB-FER token and accumulated through real d
 - The token is not the IDE. The IDE serves the token.
 - What looks like reflex may contain real signal. Examine before correcting.
 - Timestamp calibration is passive first, active only when necessary
-- TLS protects transit, not destination. REF encoding protects sensitive context at rest.
-- Sovereign local compute is the architectural answer to third-party exposure
 - New threads scored before receiving session time
-- `§CURRENT·REALITY` is replaced. `§SESSION·LOG` is preserved. Never invert.
+- §CURRENT·REALITY is replaced. §SESSION·LOG is preserved. Never invert.
+- Closure signals must be captured at the moment they are said, not reconstructed later
+- Pull before modifying remote files to avoid merge conflicts
+
+---
+
+## Published Research
+
+> **SYMB-FER: A Protocol for Context Continuity in Human-AI Collaboration**
+> John DuCrest · SYMBEYOND AI LLC · Posted May 4, 2026
+> [https://ssrn.com/abstract=6609618](https://ssrn.com/abstract=6609618)
 
 ---
 
 ## License
 
-MIT. Built to be used. Built to be shared. Built to evolve.
+MIT Licensed  ·  Fork it. Build on it. Send us what you find.
 
 ---
 
