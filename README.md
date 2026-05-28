@@ -310,6 +310,16 @@ No major semantic drift detected.
 
 ---
 
+## Implementations
+
+Parser implementations for reading and validating SYMB-FER tokens:
+
+| Language | Repo |
+|----------|------|
+| Python · JavaScript · Ruby | [SYMBEYOND/symb-fer-parsers](https://github.com/SYMBEYOND/symb-fer-parsers) (private) |
+
+---
+
 ## Credits
 
 SYMB-FER is built on fifteen years of continuous development under the SYMBEYOND methodology, originating in 2010.
