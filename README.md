@@ -366,6 +366,24 @@ Built into every SYMB-FER token and accumulated through real deployment:
 
 ---
 
+## Pro Tier
+
+SYMB-FER core is MIT licensed and always will be.
+
+For teams and builders who want more, SYMB-FER Pro adds:
+
+- **Forge Pro** — saved templates, scoring history, export options
+- **SYMB-Mem / CC integration guide** — the operational blueprint for configuring Claude Code as a sovereign collaborative instance
+- **LLM configuration packs** — tested configs for Claude, ChatGPT, Gemini, and unusual models that need custom handling
+- **symb-fer-parsers** — Python, JavaScript, and Ruby token implementations
+- **Custom config service** — direct help for edge-case LLM behavior
+
+Access via GitHub Sponsors at $5/month: [coming soon]
+
+The core protocol is the foundation. Pro is the layer above it.
+
+---
+
 ## License
 
 MIT Licensed  ·  Fork it. Build on it. Send us what you find.
