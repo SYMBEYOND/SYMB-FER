@@ -43,7 +43,7 @@ The token travels with you. It updates as your work evolves. It works across any
 
 **Step 1: Get the template**
 
-Download [`SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt`](SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt) and open it in any text editor.
+Download [`SYMB-FER_v6.2_PROTOCOL_2026-06-01_1015H.txt`](SYMB-FER_v6.2_PROTOCOL_2026-06-01_1015H.txt) and open it in any text editor.
 
 **Step 2: Fill in your information**
 
@@ -291,7 +291,7 @@ No major semantic drift detected.
 
 | File / Folder | Description |
 |---|---|
-| [`SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt`](SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt) | v6.0 canonical protocol template -- start here |
+| [`SYMB-FER_v6.2_PROTOCOL_2026-06-01_1015H.txt`](SYMB-FER_v6.2_PROTOCOL_2026-06-01_1015H.txt) | v6.2 canonical protocol template -- start here |
 | [`SYMB-FER_v5.5_TEMPLATE.txt`](SYMB-FER_v5.5_TEMPLATE.txt) | v5.5 template -- still valid, v6.0 is current |
 | [`SYMB-FER_3_0/`](SYMB-FER_3_0/) | Validation engine and test suite |
 | [`SYMB-FER_4_0/`](SYMB-FER_4_0/) | Runtime IDE -- load token, work, export token |
