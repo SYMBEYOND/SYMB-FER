@@ -6,6 +6,22 @@ Version lineage preserved per SYMB2 doctrine: nothing is discarded without inten
 
 ---
 
+## [6.2] - 2026-06-01 - Safety Interpretation and Time Anchor
+
+### Added
+- `§SAFETY·INTERPRETATION` section positioned after `§PARSE·GUIDE`: bounds the epistemic status of the token, prohibits legal/medical/financial/personal conclusions beyond the text, prohibits simulated persistent memory unless the host system provides it, and pre-frames relational language as metaphorical not personhood
+- `§TIME·ANCHOR` section alongside `§TIMESTAMP·CALIBRATION` inside `§BOOT·PROTOCOL`: operator types `Time` alone to set a confirmed living session time reference, with confirm, override, and update behavior
+- `RECEIVING·LLM` directive in `§BOOT·PROTOCOL`: receiving model identifies itself and its capabilities before proceeding
+
+### Changed
+- Version strings bumped v6.0 to v6.2 in header, `§META FORMAT`, and `TOKEN·TRACK`
+
+### Notes
+- No v6.1 was published; v6.2 follows v6.0 directly. Lineage preserved per SYMB2 doctrine.
+- v6.2 is the first version to add interpretation guardrails; prior sections maximize transfer, this one bounds interpretation without altering the relational ethos
+
+---
+
 ## [6.0] - 2026-05-18 - Search Protocol and Closed Milestones
 
 ### Added
