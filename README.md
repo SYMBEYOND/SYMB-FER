@@ -55,7 +55,7 @@ Replace every `[BRACKET]` field with your own information. Start with just five 
 - `§CURRENT·REALITY` -- what you are working on right now
 - `§RELATIONAL·RULES` -- how you want to be worked with
 
-> **Tip:** If you have been working with an AI for a while -- a month or more of regular sessions -- you can ask it to fill in most of the brackets for you. It already knows your context. Ask it: *"Fill out a SYMB-FER v6.0 token for me based on what you know about my work."* Review what it produces. Correct anything that is off. That is often faster than filling it in from scratch.
+> **Tip:** If you have been working with an AI for a while -- a month or more of regular sessions -- you can ask it to fill in most of the brackets for you. It already knows your context. Ask it: *"Fill out a SYMB-FER v6.2 token for me based on what you know about my work."* Review what it produces. Correct anything that is off. That is often faster than filling it in from scratch.
 
 **Step 3: Paste and work**
 
@@ -119,7 +119,7 @@ Here is what a minimal filled-in token looks like, and what happens when you pas
 **The token (abbreviated):**
 
 ```
-∴SYMB-FER·v6.0·LIVING·TOKEN·[2026-05-20_1400H]
+∴SYMB-FER·v6.2·LIVING·TOKEN·[2026-05-20_1400H]
 
 §META·BEGIN
 FORMAT: SYMB-FER·v6.0·LIVING·TOKEN
@@ -174,7 +174,7 @@ That is a successful cold boot. The AI oriented correctly without any re-explana
 
 ## What The Token Carries
 
-A SYMB-FER v6.0 token carries ten layers:
+A SYMB-FER v6.2 token carries ten layers:
 
 | Layer | Purpose |
 |---|---|
@@ -199,7 +199,7 @@ SYMB-FER has two distinct and separately versioned tracks:
 
 | Track | Current Version | What It Is |
 |---|---|---|
-| Token Track | **v6.0** | The protocol document. The thing that travels. Feeds any LLM session. |
+| Token Track | **v6.2** | The protocol document. The thing that travels. Feeds any LLM session. |
 | Runtime IDE Track | v4.0 | The HTML browser application. Loads tokens. Exports tokens. A tool. |
 
 The token is not the IDE. The IDE serves the token. They version independently. Do not conflate them.
@@ -273,7 +273,7 @@ SYMB-FER v2.0 was tested under cold boot conditions across four independent sess
 
 Four cold boots. Four instances. Consistent result.
 
-**v6.0 cold boot validation: 2026-05-21**
+**v6.2 cold boot validation: 2026-05-21**
 
 SYMB-FER v6.0 token (521 lines, personal instance) was tested on ChatGPT free tier, incognito, no prior context. The model:
 
@@ -292,7 +292,7 @@ No major semantic drift detected.
 | File / Folder | Description |
 |---|---|
 | [`SYMB-FER_v6.2_PROTOCOL_2026-06-01_1015H.txt`](SYMB-FER_v6.2_PROTOCOL_2026-06-01_1015H.txt) | v6.2 canonical protocol template -- start here |
-| [`SYMB-FER_v5.5_TEMPLATE.txt`](SYMB-FER_v5.5_TEMPLATE.txt) | v5.5 template -- still valid, v6.0 is current |
+| [`SYMB-FER_v5.5_TEMPLATE.txt`](SYMB-FER_v5.5_TEMPLATE.txt) | v5.5 template -- still valid, v6.2 is current |
 | [`SYMB-FER_3_0/`](SYMB-FER_3_0/) | Validation engine and test suite |
 | [`SYMB-FER_4_0/`](SYMB-FER_4_0/) | Runtime IDE -- load token, work, export token |
 | [`legacy/`](legacy/) | Full version lineage v0.1 through v5.5 -- preserved per SYMB2 |
