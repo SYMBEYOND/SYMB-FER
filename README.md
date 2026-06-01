@@ -3,7 +3,7 @@
 [![SSRN](https://img.shields.io/badge/SSRN-6609618-blue)](https://ssrn.com/abstract=6609618)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/Token%20Track-v6.0-orange)](CHANGELOG.md)
-[![Works With](https://img.shields.io/badge/Works%20With-Claude%20%7C%20ChatGPT%20%7C%20Gemini-purple)](SYMB-FER_v6.0_PROTOCOL_2026-05-18_1600H.txt)
+[![Works With](https://img.shields.io/badge/Works%20With-Claude%20%7C%20ChatGPT%20%7C%20Gemini-purple)](SYMB-FER_v6.2_PROTOCOL_2026-06-01_1015H.txt)
 
 ### Encoding and reconstructing state and relational posture across stateless sessions.
 
