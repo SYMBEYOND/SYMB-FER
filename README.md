@@ -378,7 +378,7 @@ For teams and builders who want more, SYMB-FER Pro adds:
 - **symb-fer-parsers** — Python, JavaScript, and Ruby token implementations
 - **Custom config service** — direct help for edge-case LLM behavior
 
-Access via GitHub Sponsors at $5/month: [coming soon]
+Access via Patreon — the **SYMB-Builder** tier, $5/month: [Become a SYMB-Builder](https://www.patreon.com/16163910/join) · [SYMBEYOND on Patreon](https://www.patreon.com/c/SYMBEYONDAI)
 
 The core protocol is the foundation. Pro is the layer above it.
 
