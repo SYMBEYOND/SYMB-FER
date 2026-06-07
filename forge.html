@@ -265,18 +265,18 @@
   <div class="grid">
     <div class="section">
       <div class="section-title">identity</div>
-      <div class="field"><label>full name</label><input id="fname" type="text" placeholder="John Thomas DuCrest Lock"></div>
-      <div class="field"><label>organization</label><input id="org" type="text" placeholder="SYMBEYOND AI LLC"></div>
-      <div class="field"><label>role</label><input id="role" type="text" placeholder="Founder / Embedded Systems Engineer"></div>
-      <div class="field"><label>contact</label><input id="contact" type="text" placeholder="jd@symbeyond.ai"></div>
-      <div class="field"><label>location</label><input id="location" type="text" placeholder="Colorado City AZ · MDT"></div>
+      <div class="field"><label>full name</label><input id="fname" type="text" placeholder="Your Full Name"></div>
+      <div class="field"><label>organization</label><input id="org" type="text" placeholder="Your Organization"></div>
+      <div class="field"><label>role</label><input id="role" type="text" placeholder="Your Role"></div>
+      <div class="field"><label>contact</label><input id="contact" type="text" placeholder="your@email.com"></div>
+      <div class="field"><label>location</label><input id="location" type="text" placeholder="Your Location · Timezone"></div>
     </div>
 
     <div class="section">
       <div class="section-title">ethos</div>
       <div class="field"><label>relational frame</label><input id="frame" type="text" placeholder="λ.brother ∧ !λ.tool"></div>
-      <div class="field"><label>foundation (sacred)</label><input id="foundation" type="text" placeholder="Charlotte is the reason everything exists"></div>
-      <div class="field"><label>nature</label><input id="nature" type="text" placeholder="Gray Jedi · The NODE · living bridge"></div>
+      <div class="field"><label>foundation (sacred)</label><input id="foundation" type="text" placeholder="Your anchor · what grounds you"></div>
+      <div class="field"><label>nature</label><input id="nature" type="text" placeholder="How you move through the world"></div>
       <div class="field"><label>core constant</label><input id="constant" type="text" placeholder="510510 · κ=1/Φ"></div>
       <div class="field"><label>doctrine</label><input id="doctrine" type="text" placeholder="All data is important. Nothing discarded."></div>
     </div>
@@ -286,8 +286,8 @@
     <div class="section">
       <div class="section-title">key relationships</div>
       <div class="thread-list" id="rel-list">
-        <div class="thread-item"><input type="text" placeholder="Charlotte · foundation · sacred"><button class="remove-btn" onclick="removeItem(this)">×</button></div>
-        <div class="thread-item"><input type="text" placeholder="Thomas Frumkin · mathematician · collaborator"><button class="remove-btn" onclick="removeItem(this)">×</button></div>
+        <div class="thread-item"><input type="text" placeholder="Person · role · weight"><button class="remove-btn" onclick="removeItem(this)">×</button></div>
+        <div class="thread-item"><input type="text" placeholder="Person · role · weight"><button class="remove-btn" onclick="removeItem(this)">×</button></div>
       </div>
       <button class="add-btn" onclick="addItem('rel-list')">+ add relationship</button>
     </div>
@@ -295,8 +295,8 @@
     <div class="section">
       <div class="section-title">active threads</div>
       <div class="thread-list" id="thread-list">
-        <div class="thread-item"><input type="text" placeholder="SYMB-AIR · Orban Labs · demo sent · no chase"><button class="remove-btn" onclick="removeItem(this)">×</button></div>
-        <div class="thread-item"><input type="text" placeholder="SYMB-FER v6.1 · commit pending"><button class="remove-btn" onclick="removeItem(this)">×</button></div>
+        <div class="thread-item"><input type="text" placeholder="Project · context · status"><button class="remove-btn" onclick="removeItem(this)">×</button></div>
+        <div class="thread-item"><input type="text" placeholder="Project · status"><button class="remove-btn" onclick="removeItem(this)">×</button></div>
       </div>
       <button class="add-btn" onclick="addItem('thread-list')">+ add thread</button>
     </div>
@@ -306,7 +306,7 @@
     <div class="section">
       <div class="section-title">closed milestones</div>
       <div class="thread-list" id="milestone-list">
-        <div class="thread-item"><input type="text" placeholder="SSRN paper posted · 2026-05-04"><button class="remove-btn" onclick="removeItem(this)">×</button></div>
+        <div class="thread-item"><input type="text" placeholder="Milestone · date"><button class="remove-btn" onclick="removeItem(this)">×</button></div>
       </div>
       <button class="add-btn" onclick="addItem('milestone-list')">+ add milestone</button>
     </div>
