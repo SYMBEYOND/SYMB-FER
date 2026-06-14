@@ -55,7 +55,7 @@ Replace every `[BRACKET]` field with your own information. Start with just five 
 - `§CURRENT·REALITY` -- what you are working on right now
 - `§RELATIONAL·RULES` -- how you want to be worked with
 
-> **Tip:** If you have been working with an AI for a while -- a month or more of regular sessions -- you can ask it to fill in most of the brackets for you. It already knows your context. Ask it: *"Fill out a SYMB-FER v6.2 token for me based on what you know about my work."* Review what it produces. Correct anything that is off. That is often faster than filling it in from scratch.
+> **Tip:** If you have been working with an AI for a while... a month or more of regular sessions you can ask it to fill in most of the brackets for you. It already knows your context. Ask it: *"Fill out a SYMB-FER v6.2 token for me based on what you know about my work."* Review what it produces. Correct anything that is off. That is often faster than filling it in from scratch.
 
 **Step 3: Paste and work**
 
@@ -166,7 +166,7 @@ RULE: no·em·dashes·ever·in·any·output
 
 > *Token received, Alex J. Doe. Acme Corp brand refresh, June 15 pitch deadline. You're finalizing the brand voice document and waiting on three logo approvals from the client.*
 >
-> *Brand voice is in your hands right now -- what are we working on?*
+> *Brand voice is in your hands right now. What are we working on?*
 
 That is a successful cold boot. The AI oriented correctly without any re-explanation. It knows the project, the timeline, the immediate state, and how to engage.
 
