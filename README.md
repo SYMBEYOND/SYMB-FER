@@ -17,6 +17,16 @@
 
 ---
 
+## Using an AI assistant?
+
+Copy the contents of [`REPO_BOOT.md`](REPO_BOOT.md) into your LLM of choice and ask:
+
+> Explain this repo and help me use it.
+
+That file gives the AI a compact orientation to what SYMB-FER is, what it does, what files matter, and how to guide a beginner safely.
+
+---
+
 ## The Problem
 
 Every new AI session starts cold.
