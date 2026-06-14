@@ -98,12 +98,12 @@ Do not open a public GitHub issue for security vulnerabilities. Use the email ab
 
 ## Supported Versions
 
-| Version | Supported |
-|---|---|
-| 5.5 (Token Track) | Yes, current |
-| 4.0 (Runtime IDE) | Yes, current |
-| 3.2 | Security fixes only |
-| 2.0 and below | Not supported |
+| Version / Track | Status | Notes |
+|---|---|---|
+| v6.2 Token Track | Current | Active public token protocol track. |
+| v5.5 Token Track | Legacy / valid | Still usable, but no longer the current public track. |
+| v4.0 Runtime IDE | Separate runtime track | Runtime/interface lineage; not the active token protocol version. |
+| v3.x Engine / Validation | Legacy validation lineage | Includes SHA-256 validation tests and engine history. |
 
 ---
 

@@ -260,6 +260,8 @@ Run the full test suite:
 ./SYMB-FER_3_0/run_tests.sh
 ```
 
+**Integrity tooling:** Public SYMB-FER includes optional SHA-256 token integrity verification for cases where exact text continuity matters. Advanced integrity workflows — such as batch manifests, chain-of-custody metadata, release signing, and Pro installment verification — belong to the SYMB-FER-Pro / SYMB-Builder layer.
+
 ---
 
 ## Proof of Concept: 2026-03-30
