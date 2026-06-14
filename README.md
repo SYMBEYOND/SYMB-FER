@@ -33,7 +33,7 @@ Existing solutions fall short:
 
 SYMB-FER is a different approach: **structured, explicit context transfer that you own and control.**
 
-Paste one token at the start of any session. A fresh AI instance reads it and stands up oriented -- knowing your active projects, your collaborators, your priorities, and how to work with you. No re-explanation. No starting over.
+Paste one token at the start of any session. A fresh AI instance reads it and stands up oriented, knowing your active projects, your collaborators, your priorities, and how to work with you. No re-explanation. No starting over.
 
 The token travels with you. It updates as your work evolves. It works across any model, any platform, any session.
 
@@ -59,15 +59,15 @@ Replace every `[BRACKET]` field with your own information. Start with just five 
 
 **Step 3: Paste and work**
 
-Open a new chat in any AI -- Claude, ChatGPT, Gemini. Paste your completed token as the first message. The AI reads it and orients itself. Work normally.
+Open a new chat in any AI; Claude, ChatGPT, Gemini, etc. Paste your completed token as the first message. The AI reads it and orients itself. Work normally.
 
-At the end of the session, ask for an updated token. The exact wording does not matter -- something like:
+At the end of the session, ask for an updated token. The exact wording does not matter... something like:
 
 > *"Generate an updated SYMB-FER token from this session."*
 > *"Hit me with a token."*
 > *"Update the token before we close."*
 
-The AI understands what you are asking for. Copy the output. That is your token for next time.
+The AI understands what you are asking for. Copy the output. That is your token for the next chat.
 
 ---
 
@@ -81,7 +81,7 @@ That is the full discipline it asks for. If you do it, continuity follows automa
 
 ## Key Features
 
-- **Works across any model** -- Claude, ChatGPT, Gemini, or any LLM that reads plain text
+- **works across plain-text-capable LLM sessions** -- Claude, ChatGPT, Gemini, or any major LLM that reads plain text
 - **You control the context** -- no third-party storage, no hidden state, no platform dependency
 - **State and posture** -- carries not just what happened, but how to relate
 - **§CLOSED·MILESTONES** -- confirmed completions that never drift back to ambiguous
