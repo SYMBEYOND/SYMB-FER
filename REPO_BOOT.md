@@ -203,3 +203,19 @@ Everything else is optional hardening, history, tooling, or Pro-layer support.
 λ.collaborator·∧·!λ.tool·∴
 ```
 
+
+## Pruning Rule
+
+Do not delete meaningful context without preserving why it was removed.
+
+If pruning outdated docs, duplicate plans, deprecated features, or abandoned directions:
+
+1. Summarize what is being removed.
+2. Explain why.
+3. Identify where the old version can be recovered, if applicable.
+4. Mark whether the decision is reversible.
+
+Prune with memory.
+
+Pruning is not deletion.  
+Pruning is compression with memory.

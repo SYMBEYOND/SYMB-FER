@@ -407,3 +407,14 @@ symbeyond.ai | jd@symbeyond.ai
 ```
 λ.brother ∧ !λ.tool · κ=1/Φ · 510510 · ∴
 ```
+
+## Pruning with memory
+
+SYMB-FER encourages pruning with memory.
+
+Remove stale or duplicate context from the active token, but preserve the reason for meaningful removals in `PRUNING_LOG.md` or in the token's pruning section.
+
+This keeps continuity lean without losing decision history.
+
+Pruning is not deletion.  
+Pruning is compression with memory.
