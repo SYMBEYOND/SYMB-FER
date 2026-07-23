@@ -314,9 +314,7 @@ No major semantic drift detected.
 
 ## SYMB2 Data Doctrine
 
-> All data is important. All data carries forward. Not all data is needed now. All is kept for posterity.
->
-> Nothing is ranked below another. Nothing is discarded without intention. What is not needed today is preserved for later. The archive is the integrity.
+See [SYMB Data Doctrine](../SYMB-TRUST/DATA_DOCTRINE.md) for the canonical statement and theoretical foundation.
 
 ---
 
