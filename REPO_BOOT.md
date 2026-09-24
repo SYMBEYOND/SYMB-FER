@@ -33,15 +33,15 @@ Important distinctions and boundaries:
 Engine: `1.0.0-rc1`
 Configuration schema: `1`
 Managed-output schema: `1`
-Branch: `feat/add-repo-boot-engine`
-Meaningful source commit: `c94bc7e1f13650c1d141ad3212c4fe56adc3cddb`
-Working tree dirty: `YES`
+Branch: `main`
+Meaningful source commit: `0e25a2d21930d5f4e9324430c4b66eb33d225f5f`
+Working tree dirty: `NO`
 
 ### Human-approved repository context
 
-Purpose: Build and maintain the SYMBEYOND ReBoot Continuity Layer.
-Audience: Builders, maintainers, and human or AI collaborators resuming repository work.
-Status: V1 privacy-safe release candidate under validation.
+Purpose: Develop and maintain SYMB-FER, a user-controlled protocol for transferring structured context and relational posture across stateless AI sessions.
+Audience: Users, builders, maintainers, parser authors, and human or AI collaborators working with SYMB-FER tokens and runtime tooling.
+Status: Active protocol; Token Track v6.2 is current, while the Runtime IDE Track is separately versioned at v4.0.
 
 ### Authority and uncertainty
 
@@ -53,21 +53,6 @@ Status: V1 privacy-safe release candidate under validation.
 
 ### Approved paths
 
-- PRESENT `README.md` (file): Primary product overview
-- PRESENT `CHANGELOG.md` (file): Version and verification history
-- MISSING `USAGE.md` (file): Supported local operating workflow
-- PRESENT `.reboot.json` (file): Human-approved repository and privacy configuration
-- PRESENT `.reboot/reboot.py` (file): Canonical dependency-free V1 engine
-- MISSING `scripts/update_repo_boot.py` (file): Backward-compatible updater entrypoint
-- MISSING `scripts/self_check.py` (file): Repository-level verification entrypoint
-- MISSING `tests/test_reboot_v1_contract.py` (file): Privacy and behavior regression contract
-- MISSING `.github/workflows/self-check.yml` (file): Read-only pull request and push verification
-- PRESENT `.github/workflows/repo-boot-auto-update.yml` (file): Guarded main-branch managed-block update
-- PRESENT `.reboot` (directory): Installed ReBoot engine
-- MISSING `scripts` (directory): Compatibility and repository checks
-- PRESENT `tests` (directory): Automated contract verification
-- MISSING `docs` (directory): Design and workflow documentation
-- PRESENT `.github/workflows` (directory): Continuous integration and controlled automation
-- PRESENT `REPO_BOOT.md` (generated): Stable human orientation with one managed state block
+- None approved
 
 <!-- REPO_BOOT:AUTO:END -->
