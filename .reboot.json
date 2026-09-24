@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "repository": {
-    "purpose": "Repository state and orientation management",
-    "audience": "Builders, maintainers, and AI collaborators",
-    "status": "Production"
+    "purpose": "Develop and maintain SYMB-FER, a user-controlled protocol for transferring structured context and relational posture across stateless AI sessions.",
+    "audience": "Users, builders, maintainers, parser authors, and human or AI collaborators working with SYMB-FER tokens and runtime tooling.",
+    "status": "Active protocol; Token Track v6.2 is current, while the Runtime IDE Track is separately versioned at v4.0."
   },
   "orientation": {
     "important_files": [],
