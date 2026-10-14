@@ -6,6 +6,18 @@ Version lineage preserved per SYMB2 doctrine: nothing is discarded without inten
 
 ---
 
+## [Unreleased]
+
+### Added
+- `SYMB-FER_6_2/` validation engine for v6.2 tokens with full test suite
+- CI workflow `validate-token.yml` to run v6.2 validator on push and pull request
+
+### Changed
+- README updated with separate validation instructions for v3.0 and v6.2
+- Repository contents table expanded to include v6.2 validator
+
+---
+
 ## [6.2] - 2026-06-01 - Safety Interpretation and Time Anchor
 
 ### Added
