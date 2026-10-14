@@ -301,9 +301,19 @@ For the fuller security model, boundaries, and reporting instructions, see [`SEC
 
 Validate a token locally before reuse:
 
+**For v3.0 tokens:**
+
 ```bash
 python SYMB-FER_3_0/symbfer_engine.py your_token.txt
 ```
+
+**For v6.2 tokens:**
+
+```bash
+python SYMB-FER_6_2/validate_v6_2.py your_token.txt
+```
+
+Note: The `SYMB-FER_3_0/` engine validates v3.0 format only and does not validate v5.5 or v6.2 tokens. Use `SYMB-FER_6_2/` for v6.2 validation.
 
 | Result | Meaning |
 |---|---|
@@ -315,6 +325,7 @@ Run the repository's validation suite:
 
 ```bash
 ./SYMB-FER_3_0/run_tests.sh
+./SYMB-FER_6_2/run_tests.sh
 ```
 
 Public SYMB-FER also includes optional SHA-256 integrity verification for cases where exact text continuity matters.
@@ -354,7 +365,8 @@ These are project validation records, not claims of universal model behavior or 
 |---|---|
 | [`SYMB-FER_v6.2_PROTOCOL_2026-06-01_1015H.txt`](SYMB-FER_v6.2_PROTOCOL_2026-06-01_1015H.txt) | v6.2 canonical public protocol template; start here |
 | [`SYMB-FER_v5.5_TEMPLATE.txt`](SYMB-FER_v5.5_TEMPLATE.txt) | v5.5 public template; preserved lineage |
-| [`SYMB-FER_3_0/`](SYMB-FER_3_0/) | Validation engine and test suite |
+| [`SYMB-FER_3_0/`](SYMB-FER_3_0/) | v3.0 validation engine and test suite |
+| [`SYMB-FER_6_2/`](SYMB-FER_6_2/) | v6.2 validation engine and test suite |
 | [`SYMB-FER_4_0/`](SYMB-FER_4_0/) | Runtime IDE; load token, work, export token |
 | [`legacy/`](legacy/) | Preserved historical lineage |
 | [`SYMB-FER_SPEC.md`](SYMB-FER_SPEC.md) | v2.0 format specification |
