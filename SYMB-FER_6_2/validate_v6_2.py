@@ -205,10 +205,12 @@ def validate_v6_2(raw_text: str, raw_bytes: Optional[bytes] = None) -> Validatio
             sha_value = line.split(":", 1)[1].strip()
             if not sha_value:
                 result.warnings.append("SHA256 field blank: allowed, not verified")
-            elif not SHA_RE.fullmatch(sha_value):
-                result.failures.append("SHA256 field malformed: expected 64 lowercase hex chars or blank")
-            else:
+            elif sha_value == "PENDING":
+                result.warnings.append("SHA256 field PENDING: template placeholder, not signed")
+            elif SHA_RE.fullmatch(sha_value):
                 result.passes.append("SHA256 field valid")
+            else:
+                result.failures.append("SHA256 field malformed: expected 64 lowercase hex chars, blank, or PENDING")
             sha_pattern = sha_value
             break
 
