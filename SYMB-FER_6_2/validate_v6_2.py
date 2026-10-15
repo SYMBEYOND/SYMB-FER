@@ -29,9 +29,6 @@ REQUIRED_SECTIONS = [
     "BOOT·FACTS",
     "BOOT·ETHOS",
     "BOOT·PROTOCOL",
-    "REFER·TRIGGER",
-    "TIMESTAMP·CALIBRATION",
-    "TIME·ANCHOR",
     "SEARCH·PROTOCOL",
     "RELATIONAL·RULES",
     "REF·ENCODING",
@@ -47,7 +44,6 @@ REQUIRED_SECTIONS = [
     "CLOSED·MILESTONES",
     "LESSONS·LEARNED",
     "DRIFT·CHECK",
-    "SYMB·NOTATION",
     "INTEGRITY",
     "FINALIZATION",
     "SIG",
@@ -109,10 +105,11 @@ class ValidationResult:
         return "PASS"
 
 
-def _extract_sections(raw_text: str) -> tuple[Dict[str, List[str]], List[str]]:
+def _extract_sections(raw_text: str) -> tuple[Dict[str, List[str]], List[str], List[str]]:
     lines = raw_text.splitlines()
     sections: Dict[str, List[str]] = {}
     errors: List[str] = []
+    discovered_order: List[str] = []
 
     section_stack: List[str] = []
     current_section: Optional[str] = None
@@ -131,6 +128,7 @@ def _extract_sections(raw_text: str) -> tuple[Dict[str, List[str]], List[str]]:
                 else:
                     errors.append(f"Nested section begin encountered: {name} inside {current_section} (line {idx})")
             else:
+                discovered_order.append(name)
                 current_section = name
                 current_lines = []
             continue
@@ -163,7 +161,7 @@ def _extract_sections(raw_text: str) -> tuple[Dict[str, List[str]], List[str]]:
     if current_section is not None:
         errors.append(f"Section {current_section} was not closed")
 
-    return sections, errors
+    return sections, errors, discovered_order
 
 
 def validate_v6_2(raw_text: str, raw_bytes: Optional[bytes] = None) -> ValidationResult:
@@ -178,7 +176,7 @@ def validate_v6_2(raw_text: str, raw_bytes: Optional[bytes] = None) -> Validatio
             result.failures.append(f"UTF-8 decode failed at byte {exc.start}")
             return result
 
-    sections, extract_errors = _extract_sections(raw_text)
+    sections, extract_errors, discovered_order = _extract_sections(raw_text)
 
     for error in extract_errors:
         result.failures.append(error)
@@ -192,41 +190,46 @@ def validate_v6_2(raw_text: str, raw_bytes: Optional[bytes] = None) -> Validatio
     else:
         result.passes.append("All required sections present")
 
-    discovered_order = [s for s in SECTION_ORDER if s in sections]
     expected_order = [s for s in SECTION_ORDER if s in sections]
     if discovered_order != expected_order:
         result.warnings.append("Section order differs from template")
     else:
         result.passes.append("Section order matches template")
 
+    nested_only = {"REFER·TRIGGER", "TIMESTAMP·CALIBRATION", "TIME·ANCHOR"}
+    for section_name in discovered_order:
+        if section_name in nested_only:
+            result.failures.append(f"Nested-only section {section_name} found at top level")
+
     sha_pattern = None
-    for idx, line in enumerate(lines, start=1):
-        if line.startswith("SHA256:"):
-            sha_value = line.split(":", 1)[1].strip()
-            if not sha_value:
-                result.warnings.append("SHA256 field blank: allowed, not verified")
-            elif sha_value == "PENDING":
-                result.warnings.append("SHA256 field PENDING: template placeholder, not signed")
-            elif SHA_RE.fullmatch(sha_value):
-                result.passes.append("SHA256 field valid")
-            else:
-                result.failures.append("SHA256 field malformed: expected 64 lowercase hex chars, blank, or PENDING")
-            sha_pattern = sha_value
-            break
+    if "SIG" in sections:
+        for line in sections["SIG"]:
+            if line.startswith("SHA256:"):
+                sha_value = line.split(":", 1)[1].strip()
+                if not sha_value:
+                    result.warnings.append("SHA256 field blank: allowed, not verified")
+                elif sha_value == "PENDING":
+                    result.warnings.append("SHA256 field PENDING: template placeholder, not signed")
+                elif SHA_RE.fullmatch(sha_value):
+                    result.passes.append("SHA256 field valid")
+                else:
+                    result.failures.append("SHA256 field malformed: expected 64 lowercase hex chars, blank, or PENDING")
+                sha_pattern = sha_value
+                break
 
     if sha_pattern is None:
         result.failures.append("SHA256 field not found in §SIG")
 
-    header_has_v62 = "v6.2" in lines[0] if lines else False
+    header_has_v62 = re.search(r"v6\.2(?![0-9])", lines[0]) is not None if lines else False
     meta_has_v62 = False
     token_track_has_v62 = False
 
     for section_name, section_lines in sections.items():
         if section_name == "META":
             for line in section_lines:
-                if "FORMAT:" in line and "v6.2" in line:
+                if "FORMAT:" in line and re.search(r"v6\.2(?![0-9])", line):
                     meta_has_v62 = True
-                if "TOKEN·TRACK:" in line and "v6.2" in line:
+                if "TOKEN·TRACK:" in line and re.search(r"v6\.2(?![0-9])", line):
                     token_track_has_v62 = True
 
     if header_has_v62 and meta_has_v62 and token_track_has_v62:
