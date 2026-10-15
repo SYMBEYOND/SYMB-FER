@@ -33,6 +33,9 @@ run_test "NOTATION OPTIONAL"      SYMB-FER_6_2/tests/test_notation_optional.txt 
 run_test "SHA IN SIG ONLY"        SYMB-FER_6_2/tests/test_sha_in_sig_only.txt         "FAIL"
 run_test "NESTED TOP LEVEL"       SYMB-FER_6_2/tests/test_nested_top_level.txt        "FAIL"
 run_test "VERSION 6.20"           SYMB-FER_6_2/tests/test_version_6_20.txt            "FAIL"
+run_test "MISSING REFER TRIGGER"  SYMB-FER_6_2/tests/test_missing_refer_trigger.txt    "FAIL"
+run_test "MISSING TIMESTAMP"      SYMB-FER_6_2/tests/test_missing_timestamp_calibration.txt "FAIL"
+run_test "MISSING TIME ANCHOR"    SYMB-FER_6_2/tests/test_missing_time_anchor.txt      "FAIL"
 
 echo "=== RESULTS: $PASS passed · $FAIL failed ==="
 [ $FAIL -eq 0 ] && exit 0 || exit 1
